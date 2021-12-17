@@ -3,7 +3,17 @@ helper.function <- function()
   return(1)
 }
 
-all.rows = function(data){
+examine.df = function(df){
+  dim(df)
+  str(df)
+  summary(df)
+  colnames(df)
+  head(df, n = 10)
+  tail(df, n = 5)
+  View(df)
+}
+
+examine.all.rows = function(data){
   print(data,n=nrow(data))
 }
 
@@ -13,6 +23,7 @@ as.percent = function(big, small){
   return (as.integer(y))
 }
 
+#plots
 plot.answers = function(data, column){
   
   #create title

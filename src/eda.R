@@ -9,4 +9,8 @@ for (dataset in project.info$data)
 
 examine.df(gpu)
 examine.df(task.x.y)
-examine.df(application.checkpoints)
+
+#checkpoints
+df.examine(application.checkpoints)
+df.headtail(application.checkpoints)
+df.view(application.checkpoints)

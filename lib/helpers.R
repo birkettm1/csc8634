@@ -3,14 +3,20 @@ helper.function <- function()
   return(1)
 }
 
-examine.df = function(df){
+df.examine = function(df){
+  colnames(df)
+  summary(df)
   dim(df)
   str(df)
-  summary(df)
-  colnames(df)
+}
+
+df.view = function(df){
+  view(df)  
+}
+
+df.headtail = function(df){
   head(df, n = 10)
   tail(df, n = 5)
-  View(df)
 }
 
 examine.all.rows = function(data){

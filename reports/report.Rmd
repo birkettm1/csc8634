@@ -3,12 +3,52 @@ title: "CSC 8634 - Cloud Computing"
 author: "Marc Birkett"
 date: "17/12/2021"
 output: pdf_document
+classoption:
+- twocolumn
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
+
+## Introduction
+This project will be in exploratory data analysis project. To bring structure to this project the CRISP-DM methodology will be followed as "it is soundly based on the practical, real-world experience of how people conduct data mining projects." (Chapman et al, 2000). To aid organisation and repeatability of the project various packages from the Tidyverse will be used, particularly ReadR, DPlyr, GGPlot2 and ProjectTemplate. The methodology splits a data mining project into 5 stages which will provide structure to this document, these are Business Understanding, Data Understanding, Data Preparation, Modelling and Evaluation.
+
+
+## Business Understanding 
+\textcolor{red}{(Business objectives, assess situation, goals, project plan)}
+
+\textcolor{red}{What is the need for the project? - Justify your choice of response (i.e. the nature of, and your plan for, your project). To give strength to your argument, you should reference to practice elsewhere (e.g. in academic literature, or industry practices.}
+
+
+Hoefler, Torsten and Belli (2015) state that the "measuring and reporting performance of parallel computers constitute the basis of scientific advancement of high performance computing ... and that the state of practice is lacking". This paper conducts a performance evaluation of terapixel rendering in cloud super computing. The solution was rendering using an Infrastructure as a Service (IaaS) cloud environment and up to 1024 graphical process unit (GPU) nodes which was used to compute a realistic visualisation of Newcastle Upon Tyne and its environmental data as captured by the Newcastle Urban Observatory. The data was subsequently provided for analysis via comma separated value files. There will also subsequently be a dashboard created to allow investigation of the data set. The completion of this paper will contribute to the some of knowledge regarding the measurement and assessment of metrics on cloud based supercomputers.
+
+## Data Understanding 
+\textcolor{red}{(collect initial data, describe, explore, data quality)}
+\textcolor{red}{What, concisely, did you do?}
+
+
+## Data Preparation 
+\textcolor{red}{(select, clean, construct, integrate, format)}
+\textcolor{red}{What, concisely, did you do?}
+
+
+## Modelling 
+\textcolor{red}{(technique, test design, build, assess) R-Shiny}
+\textcolor{red}{What, concisely, did you do?}
+
+
+## Evaluation 
+\textcolor{red}{(evaluate, review, next steps)}
+\textcolor{red}{How successful has it been? Provide evidence, using appropriate evaluation methodologies, and comment on the strengths/weaknesses of your evidence in answering this question. What are the future implications for work in this area? If applicable, which areas of extension work are now possible due to the foundational work you have performed in this project?}
+
+
+## References
+
+Hoefler, Torsten, and Roberto Belli, 2015, "Scientific benchmarking of parallel computing systems: twelve ways to tell the masses when reporting performance results." In Proceedings of the international conference for high performance computing, networking, storage and analysis, p. 73. ACM, 2015.
+
+Pete Chapman (NCR), Julian Clinton (SPSS), Randy Kerber (NCR), Thomas Khabaza (SPSS), Thomas Reinartz (DaimlerChrysler), Colin Shearer (SPSS) and Rüdiger Wirth (DaimlerChrysler), 2000, CRISP-DM Step-by-step data mining guide
 
 ## R Markdown
 

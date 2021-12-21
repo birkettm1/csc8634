@@ -13,7 +13,7 @@ knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
 
 ## Introduction
-This project will be in exploratory data analysis project. To bring structure to this project the CRISP-DM methodology will be followed as "it is soundly based on the practical, real-world experience of how people conduct data mining projects." (Chapman et al, 2000). To aid organisation and repeatability of the project various packages from the Tidyverse will be used, particularly ReadR, DPlyr, GGPlot2 and ProjectTemplate. The methodology splits a data mining project into 5 stages which will provide structure to this document, these are Business Understanding, Data Understanding, Data Preparation, Modelling and Evaluation.
+This project is a data analysis project into a multiple GPU node map rendering system. To bring structure to this project the CRISP-DM methodology will be followed as "it is soundly based on the practical, real-world experience of how people conduct data mining projects." (Chapman et al, 2000). To aid organisation and repeatability of the project various packages from the Tidyverse will be used, particularly ReadR, DPlyr, GGPlot2 and ProjectTemplate. The methodology splits a data mining project into 5 stages which will provide structure to this document, these are Business Understanding, Data Understanding, Data Preparation, Modelling and Evaluation.
 
 
 ## Business Understanding 
@@ -21,8 +21,45 @@ This project will be in exploratory data analysis project. To bring structure to
 
 \textcolor{red}{What is the need for the project? - Justify your choice of response (i.e. the nature of, and your plan for, your project). To give strength to your argument, you should reference to practice elsewhere (e.g. in academic literature, or industry practices.}
 
+Cloud computing has became more commonly used throughout all sectors in the UK since 2000. Multiple providers such as Amazon and Microsoft are now in a marketplace which seeks to offer externally hosted solutions on a Software as a Service (SaaS) basis, along with infrastructure and platforms to provide eslastic, scalable solutions to business need. Along with this there is an opportunity to bring rigour to the measurement and evaluation of cloud computing approaches. A Research and literature review into the subject was carried out via Google Scholar. The terms "statistical rigour, reproducible data analyses, performance evaluation in computer science" produced 7.94 million results. The addition of keywords including "cloud computing" and "supercomputer" brought this down to 44,600 records. A selection of highly referenced documents was reviewed.
 
-Hoefler, Torsten and Belli (2015) state that the "measuring and reporting performance of parallel computers constitute the basis of scientific advancement of high performance computing ... and that the state of practice is lacking". This paper conducts a performance evaluation of terapixel rendering in cloud super computing. The solution was rendering using an Infrastructure as a Service (IaaS) cloud environment and up to 1024 graphical process unit (GPU) nodes which was used to compute a realistic visualisation of Newcastle Upon Tyne and its environmental data as captured by the Newcastle Urban Observatory. The data was subsequently provided for analysis via comma separated value files. There will also subsequently be a dashboard created to allow investigation of the data set. The completion of this paper will contribute to the some of knowledge regarding the measurement and assessment of metrics on cloud based supercomputers.
+Hoefler, Torsten and Belli (2015) state that the "measuring and reporting performance of parallel computers constitute the basis of scientific advancement of high performance computing ... and that the state of practice is lacking". Vitek and Kalibera, 2011, lamented "unrepeatable results, unreproduced results, lack of benchmarks, lack of experimental methodology", and, Papadopoulos et al, 2018, "although these important principles are simple and basic, the cloud community is yet to adopt them broadly to deliver sound measurement of cloud environments.". Given this lack of  rigour, this paper will be approached as a exploratory data analysis project.
+
+### Problem Area
+This paper conducts a performance evaluation of terapixel rendering in cloud super computing. The solution was rendering using an Infrastructure as a Service (IaaS) cloud environment and up to 1024 graphical process unit (GPU) nodes which was used to compute a realistic visualisation of Newcastle Upon Tyne and its environmental data as captured by the Newcastle Urban Observatory. The data was subsequently provided for analysis via comma separated value files. There will also subsequently be a dashboard created to allow investigation of the data set.
+
+The completion of this paper will contribute to the some of knowledge regarding the measurement and assessment of metrics on cloud based supercomputers.
+
+### Current Solution
+The project currently demonstrated that it "is feasible to produce a high quality terapixel visualization using a path tracing renderer in under a day using public IaaS cloud GPU nodes. Once generated the terapixel image supports interactive browsing of the city and its data at a range of sensing scales from the whole city to a single desk in a room" (Forshaw, 2021). However, there has been no analysis of the metrics produced by the system regarding performance.
+
+### Objectives
+Various examples of data we can investigate through an EDA process have been provided with the dataset, which are outlined here:
+
+* Which event types dominate task runtimes?
+* What is the interplay between GPU temperature and performance?
+* What is the interplay between increased power draw and render time?
+* Can we quantify the variation in computation requirements for particular tiles?
+* Can we identify particular GPU cards (based on their serial numbers) whose performance differs to other cards? (i.e. perpetually slow cards).
+* What can we learn about the efficiency of the task scheduling process?
+
+I am particularly interested in the differing performance of various GPU cards in use. This work will be applicable to the investigation of other hardware within the use of the cloud and could be applied to my day to day work.
+
+### Success criteria
+
+### Situation
+This report has been created using R Markdown and R Studio. The data has been provided via CSV.
+
+### Requirements, Assumptions and Constraints
+
+### Risks and Contingencies
+
+### Data Mining Goals
+With success criteria
+
+### Project Plan
+Assessment of tools and techniques
+
 
 ## Data Understanding 
 \textcolor{red}{(collect initial data, describe, explore, data quality)}
@@ -45,8 +82,17 @@ Hoefler, Torsten and Belli (2015) state that the "measuring and reporting perfor
 
 
 ## References
+Alessandro V. Papadopoulos, Senior Member, IEEE, Laurens Versluis, Member, IEEE, Andre Bauer, Nikolas Herbst, Member, IEEE, Joakim von Kistowski, Member, IEEE, Ahmed Ali-Eldin, Cristina L.
+Abad, Member, IEEE, Jose Nelson Amaral, Senior Member, IEEE, Petr Tuma, Member, IEEE, and
+Alexandru Iosup, Member, IEEE, 2018, Methodological Principles for Reproducible
+Performance Evaluation in Cloud Computing, [https://drive.google.com/file/d/151guslA9SYV-8BJNMXa1udvMrF4jn2ae/view](https://drive.google.com/file/d/151guslA9SYV-8BJNMXa1udvMrF4jn2ae/view) Accessed: 21/12/2021
+
+Forshaw, Matt, 2021, Performance evaluation of Terapixel rendering in Cloud (Super)computing
+[https://github.com/NewcastleDataScience/StudentProjects202122/blob/master/TeraScope/Summary.md#background] (https://github.com/NewcastleDataScience/StudentProjects202122/blob/master/TeraScope/Summary.md#background) Accessed: 21/12/2021
 
 Hoefler, Torsten, and Roberto Belli, 2015, "Scientific benchmarking of parallel computing systems: twelve ways to tell the masses when reporting performance results." In Proceedings of the international conference for high performance computing, networking, storage and analysis, p. 73. ACM, 2015.
+
+Jan Vitek, Tomas Kalibera, 2011, Repeatability, Reproducibility and Rigor in Systems Research  [https://www.cs.kent.ac.uk/pubs/2011/3174/content.pdf](https://www.cs.kent.ac.uk/pubs/2011/3174/content.pdf) Accessed: 21/12/2021
 
 Pete Chapman (NCR), Julian Clinton (SPSS), Randy Kerber (NCR), Thomas Khabaza (SPSS), Thomas Reinartz (DaimlerChrysler), Colin Shearer (SPSS) and Rüdiger Wirth (DaimlerChrysler), 2000, CRISP-DM Step-by-step data mining guide
 

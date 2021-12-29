@@ -13,7 +13,7 @@ knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
 
 ## Introduction
-This project is a data analysis project into a multiple GPU node map rendering system. To bring structure to this project the CRISP-DM methodology will be followed as "it is soundly based on the practical, real-world experience of how people conduct data mining projects." (Chapman et al, 2000). To aid organisation and repeatability of the project various packages from the Tidyverse will be used, particularly ReadR, DPlyr, GGPlot2 and ProjectTemplate. The methodology splits a data mining project into 5 stages which will provide structure to this document, these are Business Understanding, Data Understanding, Data Preparation, Modelling and Evaluation.
+This project is an exploratory data analysis (EDA) project into a multiple GPU node map rendering system. To bring structure to this project the CRISP-DM methodology will be followed as "it is soundly based on the practical, real-world experience of how people conduct data mining projects." (Chapman et al, 2000). To aid organisation and repeatability of the project various packages from the Tidyverse will be used, particularly ReadR, DPlyr, GGPlot2 and ProjectTemplate. The methodology splits a data mining project into 5 stages which will provide structure to this document, these are Business Understanding, Data Understanding, Data Preparation, Modelling and Evaluation.
 
 
 ## Business Understanding 
@@ -45,20 +45,8 @@ Various examples of data we can investigate through an EDA process have been pro
 
 I am particularly interested in the differing performance of various GPU cards in use. This work will be applicable to the investigation of other hardware within the use of the cloud and could be applied to my day to day work.
 
-### Success criteria
-
-### Situation
-This report has been created using R Markdown and R Studio. The data has been provided via CSV.
-
-### Requirements, Assumptions and Constraints
-
-### Risks and Contingencies
-
-### Data Mining Goals
-With success criteria
-
-### Project Plan
-Assessment of tools and techniques
+### Success criteria and Project Plan
+The data provided includes the complete cycle of the rendering of each graphic, along with the grid, in X and Y co-ordinates for each graphic and the granularity of the zoom. The success of this project will be identifying low performing GPU cards based on their render time. The data provided will be investigated to identify the performance of each card. The wider dataset will also then be investigated for mitigating factors such as load, through the potential complexity of the graphic being rendered and the point in the render process which takes the most time.
 
 
 ## Data Understanding 

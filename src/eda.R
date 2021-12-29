@@ -42,15 +42,54 @@ df.hostcount <- application.checkpoints %>% count(hostname) #hostname of the vir
 summary(df.hostcount)
 filter(df.hostcount, n>700)
 
+#host use
+ggplot(data=df.hostcount, aes(x=hostname, y=n, group=1)) +
+  geom_line() +
+  labs(title="Use of Hosts", y="Count", x = "Host") + 
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu")
+
 #somewhere in the region of each individual hostname
 application.checkpoints %>% count(eventName)
 
 #all records have a complete set of events - 132080
 application.checkpoints %>% count(eventType)
-
 # all start events have a stop event - 330200 of each
 
-#test for normality
+#investigate GPU data
+df.examine(gpu)
+summary(gpu)
+summary(gpu$gpuSerial)
+df.headtail(gpu)
+nrow(gpu)
+
+#gpu cards
+df.serials <- gpu %>% count(gpuSerial)
+
+#card use - all cards used 1500 times ish apart from 5 outliers
+filter(df.serials, n>2500)
+select(
+  filter(gpu, gpuSerial %in% c(320118119713,323617020221,325017019048,325217085205,325217086299))
+  , hostname, gpuSerial, gpuUUID)
+plot.continuous(df.serials, "gpuSerial")
+
+#continuous variables
+gpu <- na.omit(gpu) 
+df.powerdraw <- gpu %>% count(powerDrawWatt)
+plot.continuous(df.powerdraw, "powerDrawWatt")
+
+df.tempc <- gpu %>% count(gpuTempC)
+plot.continuous(df.tempc, "gpuTempC")
+
+df.utilisedpc = gpu %>% count(gpuUtilPerc)
+plot.continuous(df.utilisedpc, "gpuUtilPerc")
+
+df.memutilisedpc = gpu %>% count(gpuMemUtilPerc)
+plot.continuous(df.memutilisedpc, "gpuMemUtilPerc")
+
+#qq
+ggplot(gpu, aes(sample=powerDrawWatt)) +
+  stat_qq()
 
 
 

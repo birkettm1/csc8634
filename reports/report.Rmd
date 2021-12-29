@@ -75,7 +75,7 @@ In the absence of any continuous data in this table basic data quality checks we
 * Most host machines were used between 600 and 700 times during the course of the data, up to 670 times at the third quartile. However, there were 4 host machines that were used in 1240 and 1220 runs respectively as shown in Figure 1.
 * There are some tasks which were ran twice, hence having 20 instances of jobId / taskId pairs in the dataset. 
 
-Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. The GPU data
+Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. Some work around the timestamp of each start and stop event during the data preparation phase will give us the total and interim render times in seconds. The GPU data ...
 
 ## Data Preparation 
 \textcolor{red}{(select, clean, construct, integrate, format)}

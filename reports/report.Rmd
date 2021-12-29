@@ -7,9 +7,13 @@ classoption:
 - twocolumn
 ---
 
-```{r setup, include=FALSE}
+``` {r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 knitr::opts_knit$set(root.dir= normalizePath('..'))
+```
+
+``` {r loadproject, include=FALSE}
+library(ProjectTemplate); load.project()
 ```
 
 ## Introduction
@@ -52,7 +56,26 @@ The data provided includes the complete cycle of the rendering of each graphic, 
 ## Data Understanding 
 \textcolor{red}{(collect initial data, describe, explore, data quality)}
 \textcolor{red}{What, concisely, did you do?}
+To begin to identify the execution time, the Application Checkpoint data was investigated, this contains timestamps for each step of the image render process. There are 5 event types each with a start and stop event recorded. These are Total Render - the complete render event, which is made up of 4 events which are, in order, Render, Saving Config, Tiling, Uploading. Initial investigation will cover the total render time, which will indicate the performance of the GPU, should we get that far we can look into the time of each stage of the render. 
 
+``` {r hostsCount, echo=FALSE, out.width="100%", fig.cap="Azure Hosts use during Render"}
+df.hostcount <- application.checkpoints %>% count(hostname)
+#host use
+ggplot(data=df.hostcount, aes(x=hostname, y=n, group=1)) +
+  geom_line() +
+  labs(title="Use of Hosts", y="Count", x = "Host") + 
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu")
+```
+
+In the absence of any continuous data in this table basic data quality checks were carried out, this identified the following:
+
+* All of the START events have an associated STOP event, as there are the same number of both.
+* All TOTAL RENDER events have a complete set of child events.
+* Most host machines were used between 600 and 700 times during the course of the data, up to 670 times at the third quartile. However, there were 4 host machines that were used in 1240 and 1220 runs respectively as shown in Figure 1.
+* There are some tasks which were ran twice, hence having 20 instances of jobId / taskId pairs in the dataset. 
+
+Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. The GPU data
 
 ## Data Preparation 
 \textcolor{red}{(select, clean, construct, integrate, format)}

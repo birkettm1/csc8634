@@ -88,7 +88,7 @@ df.memutilisedpc = gpu %>% count(gpuMemUtilPerc)
 plot.continuous(df.memutilisedpc, "gpuMemUtilPerc")
 
 #qq
-ggplot(gpu, aes(sample=powerDrawWatt)) +
+ggplot(gpu, aes(sample=gpuTempC)) +
   stat_qq()
 
 

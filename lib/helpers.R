@@ -39,6 +39,16 @@ plot.continuous = function(df, column){
     scale_fill_brewer(palette="PuBu")
 }
 
+plot.qq = function(df, column){
+  title <- paste("QQ for", column, sep=" ")
+  ggplot(df, aes(sample=!!sym(column))) +
+    stat_qq() +
+    labs(title=title) + 
+    theme_bw() + 
+    scale_fill_brewer(palette="PuBu")
+}
+
+
 #plots
 plot.answers = function(data, column){
   

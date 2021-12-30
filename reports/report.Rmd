@@ -56,7 +56,9 @@ The data provided includes the complete cycle of the rendering of each graphic, 
 ## Data Understanding 
 \textcolor{red}{(collect initial data, describe, explore, data quality)}
 \textcolor{red}{What, concisely, did you do?}
-To begin to identify the execution time, the Application Checkpoint data was investigated, this contains timestamps for each step of the image render process. There are 5 event types each with a start and stop event recorded. These are Total Render - the complete render event, which is made up of 4 events which are, in order, Render, Saving Config, Tiling, Uploading. Initial investigation will cover the total render time, which will indicate the performance of the GPU, should we get that far we can look into the time of each stage of the render. 
+A quick review of the provided data was completed which identified that the Application Checkpoint and GPU data could be used to examine performance of each card. The data was loaded via ProjectTemplate into R studio and subsequently investigated through examining counts, "Quartile Quartile" plots, and the creation of a gpuStats dataset to create a boxplot of mean and standard deviation on performance statistics.
+
+To begin to identify the execution time, the Application Checkpoint data was investigated, this contains time stamps for each step of the image render process. There are 5 event types each with a start and stop event recorded. These are Total Render - the complete render event, which is made up of 4 events which are, in order, Render, Saving Config, Tiling, Uploading. Initial investigation will cover the total render time, which will indicate the performance of the GPU, should we get that far we can look into the time of each stage of the render. 
 
 ``` {r hostsCount, echo=FALSE, out.width="100%", fig.cap="Azure Hosts use during Render"}
 df.hostcount <- application.checkpoints %>% count(hostname)
@@ -75,7 +77,20 @@ In the absence of any continuous data in this table basic data quality checks we
 * Most host machines were used between 600 and 700 times during the course of the data, up to 670 times at the third quartile. However, there were 4 host machines that were used in 1240 and 1220 runs respectively as shown in Figure 1.
 * There are some tasks which were ran twice, hence having 20 instances of jobId / taskId pairs in the dataset. 
 
-Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. Some work around the timestamp of each start and stop event during the data preparation phase will give us the total and interim render times in seconds. The GPU data ...
+Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. Some work around the timestamp of each start and stop event during the data preparation phase will give us the total and interim render times in seconds. The GPU data gives is statistics regarding the state of each GPU with a timestamp and data covering Temperature, Power Draw, Utilised Percentage and Memory Utilised Percentage. Through the use of a set of Quantile Quantile graph is can be seen that this data is normalised and therefore we will use the arithmetic mean as the average, and standard deviation to express the variance. These can be seen in figure 2 below, it shows us that we have a complete data set to work with  and that the variance for all variables except temperature is large, which is to be expected as this is the difference between the GPU being in use, or not. This variance will be used along with the execution time identified above to indicate poor performing GPU's. We have also established that we have a complete dataset in GPU, n=1543681.
+
+``` {r gpuStats, echo=FALSE, out.width="100%", fig.cap="GPU Continuous Variable Stats"}
+#stats plot
+ggplot(df.gpustats, aes(x=variable, y=mean)) + 
+  geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
+  geom_line() +
+  geom_point() +
+  labs(title="Mean and Standard Deviation of GPU Stats", y="N", x="Variable Name") + 
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu")
+```
+
+From this investigation phase it is my intention to pull together a complete dataset to allow comparison of execution times and GPU performance statistics.
 
 ## Data Preparation 
 \textcolor{red}{(select, clean, construct, integrate, format)}

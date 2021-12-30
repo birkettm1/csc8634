@@ -17,8 +17,6 @@ examine.df(gpu)
 
 
 ## Data Understanding 
-(collect initial data, describe, explore, data quality)
-
 
 #checkpoints data investigation
 df.examine(application.checkpoints)
@@ -78,40 +76,10 @@ plot.continuous(df.serials, "gpuSerial")
 summary(gpu)
 gpu <- na.omit(gpu) 
 
-#create stats
-df.gpustats <- data.frame(
-                           variable = character(),
-                           n = integer(),
-                           min = integer(), 
-                           mean = integer(),
-                           max = integer(),
-                           sd = integer()
-                          )
-rownames <- c("variable", "n", "min", "mean", "max", "sd")
-
-powerdraw <- data.frame("Power Draw", length(gpu$powerDrawWatt), min(gpu$powerDrawWatt), 
-  mean(gpu$powerDrawWatt), max(gpu$powerDrawWatt), sd(gpu$powerDrawWatt))
-temp <- data.frame("Temperature", length(gpu$gpuTempC), min(gpu$gpuTempC), 
-                        mean(gpu$gpuTempC), max(gpu$gpuTempC), sd(gpu$gpuTempC))
-util <- data.frame("Utilised Percent", length(gpu$gpuUtilPerc), min(gpu$gpuUtilPerc), 
-                   mean(gpu$gpuUtilPerc), max(gpu$gpuUtilPerc), sd(gpu$gpuUtilPerc))
-mem <- data.frame("Memory Utilised Percent", length(gpu$gpuMemUtilPerc), min(gpu$gpuMemUtilPerc), 
-                   mean(gpu$gpuMemUtilPerc), max(gpu$gpuMemUtilPerc), sd(gpu$gpuMemUtilPerc))
-
-names(powerdraw) <- rownames
-names(temp) <- rownames
-names(util) <- rownames
-names(mem) <- rownames
-
-df.gpustats <- rbind(df.gpustats, powerdraw)
-df.gpustats <- rbind(df.gpustats, temp)
-df.gpustats <- rbind(df.gpustats, util)
-df.gpustats <- rbind(df.gpustats, mem)
+#create stats - moved to munge - DU - GPU
 
 #stats
 df.gpustats
-#df.gpustats.pivot = df.gpustats %>% 
-#  pivot_longer(!(1), names_to = "stat", values_to = "count") #createpivot
 ci.mean(gpu)
 
 #stats plot
@@ -119,7 +87,7 @@ ggplot(df.gpustats, aes(x=variable, y=mean)) +
   geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
   geom_line() +
   geom_point() +
-  labs(title="Mean and Standard Deviation of GPU Stats") + 
+  labs(title="Mean and Standard Deviation of GPU Stats", y="N", x="Variable Name") + 
   theme_bw() + 
   scale_fill_brewer(palette="PuBu")
 
@@ -128,25 +96,18 @@ ggplot(df.gpustats, aes(x=variable, y=mean)) +
 df.powerdraw <- gpu %>% count(powerDrawWatt)
 plot.continuous(df.powerdraw, "powerDrawWatt")
 plot.qq(gpu, "powerDrawWatt") #qq - normalised?
-sd(gpu$powerDrawWatt) #standard deviation
-boxplot(gpu$powerDrawWatt ~ gpu$gpuTempC,
-        ylab="PowerDraw",
-        xlab="Temperature")
 
 df.tempc <- gpu %>% count(gpuTempC)
 plot.continuous(df.tempc, "gpuTempC")
 plot.qq(gpu, "gpuTempC") #qq
-sd(gpu$gpuTempC) #standard deviation
 
 df.utilisedpc = gpu %>% count(gpuUtilPerc)
 plot.continuous(df.utilisedpc, "gpuUtilPerc")
 plot.qq(gpu, "gpuUtilPerc") #qq
-sd(gpu$gpuTempC)
 
 df.memutilisedpc = gpu %>% count(gpuMemUtilPerc)
 plot.continuous(df.memutilisedpc, "gpuMemUtilPerc")
 plot.qq(gpu, "gpuMemUtilPerc") #qq
-sd(gpu$gpuMemUtilPerc)
 
 
 
@@ -155,39 +116,6 @@ sd(gpu$gpuMemUtilPerc)
 \textcolor{red}{(select, clean, construct, integrate, format)}
 \textcolor{red}{What, concisely, did you do?}
 
-#just get the total render
-df.total_render = filter(application.checkpoints , eventName == "TotalRender")
-#order by taskId
-df.total_render = arrange(df.total_render, taskId, timestamp)
-#create empty statistics vector
-df.execution <- data.frame(timestamp=character(),
-                 hostname = character(), 
-                 jobId = character(), 
-                 taskId = character(),
-                 totalRenderTime = character()) 
 
-startTime <- NULL
 
-#start to calculate execution and output row
-for (row in 1:nrow(df.total_render)) {
-  timestamp <- df.total_render[row, "timestamp"]
-  #eventtype  <- df.total_render[row, "eventType"]
-  #print(row)
-  
-  if (eventtype == 'START'){
-    startTime <-  as.POSIXlt(timestamp)
 
-  } else {
-    endTime <-  as.POSIXlt(timestamp)
-    
-    if (!is.null(startTime)){
-      totalTime = endTime - startTime
-      
-      df.execution %>% add_row(timestamp = df.total_render$timestamp,
-                               hostname = df.total_render$hostname,
-                               jobId = df.total_render$jobId,
-                               taskId = df.total_render$taskId,
-                               totalRenderTime = totalTime)
-    }
-  }
-}

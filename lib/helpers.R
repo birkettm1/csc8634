@@ -48,7 +48,6 @@ plot.qq = function(df, column){
     scale_fill_brewer(palette="PuBu")
 }
 
-
 #plots
 plot.answers = function(data, column){
   

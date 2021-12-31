@@ -116,6 +116,54 @@ plot.qq(gpu, "gpuMemUtilPerc") #qq
 \textcolor{red}{(select, clean, construct, integrate, format)}
 \textcolor{red}{What, concisely, did you do?}
 
+library('ProjectTemplate')
+load.project()
+
+summary(df.execution)
+head(df.execution) #got the execution time
+df.execution %>% count(hostname)
+
+#summary
+length(df.execution$totalRenderTime)
+min(df.execution$totalRenderTime) 
+max(df.execution$totalRenderTime)
+
+#update to say if the row is upper or lower quartile based on sd
+mean(df.execution$totalRenderTime)
+renderTimeSd <- sd(df.execution$totalRenderTime)
+upperQuartileValue <- mean(df.execution$totalRenderTime) + renderTimeSd
+lowerQuartileValue <- mean(df.execution$totalRenderTime) - renderTimeSd
+
+#plot the distribution
+ggplot(df.execution, aes(x=totalRenderTime)) + 
+  geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                 binwidth=1,
+                 colour="black", fill="white") +
+  geom_density(alpha=.2, fill="#FF6666") +  # Overlay with transparent density plot
+  geom_vline(aes(xintercept=mean(totalRenderTime, na.rm=T)),   # Ignore NA values for mean
+           color="red", linetype="solid", size=1) + 
+  geom_vline(aes(xintercept=mean(totalRenderTime + renderTimeSd, na.rm=T)),   # Ignore NA values for upper sd
+             color="red", linetype="dashed", size=1) + 
+  geom_vline(aes(xintercept=mean(totalRenderTime - renderTimeSd, na.rm=T)),   # Ignore NA values for lowersd
+             color="red", linetype="dashed", size=1) + 
+  labs(title="Distribution of Total Render Time in 1 Second Bins", y="Density", x="Render Time in Seconds") + 
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu")
+
+#get the upper quartile
+filter(df.execution, totalRenderTime > upperQuartileValue)
+
+#get the 95th quartile
+ninequantile <- quantile(df.execution$totalRenderTime, .95) 
+df.longrender <- select(filter(df.execution, totalRenderTime > ninequantile),start,end,hostname,jobId,taskId,totalRenderTime)
+summary(df.longrender)
+df.longrendercount <- df.longrender %>% count(hostname)
+  
+#need to limit the size of df-execution before getting gpu stats, get lowest performing quartile?
+#add in the gpu on hostname = gpu.hostname and start = gpu.timestamp
+summary(gpu)
 
 
+#df.executionGPU = merge(df.execution, gpu, by.x=c('start', 'hostname'), by.y=c('timestamp', 'hostname'))
+#df.executionGPU = merge(df.execution, gpu, by="hostname")
 

@@ -4,6 +4,8 @@ gpu$starttime = sapply(gpu$timestamp, function(i){
   x = parse_date_time(i, orders="YmdHMS")
 })
 
+cache('gpu')
+
 matcheddatalist = list()
 
 for (row in 1:nrow(df.longestexecutions)) {
@@ -18,7 +20,7 @@ for (row in 1:nrow(df.longestexecutions)) {
   match <- filter(gpu, hostname == longhost & starttime >= longstart & starttime <= longend)
   
   #get the first executed job and assume thats the first task
-  match <- arrange(match, timestamp) %>% filter(row_number()==1)
+  #match <- arrange(match, timestamp) %>% filter(row_number()==1)
   match$totalRenderTime = longhost <- df.longestexecutions[row, "totalRenderTime"]
   
   #add to the list
@@ -27,3 +29,6 @@ for (row in 1:nrow(df.longestexecutions)) {
 
 #merge the data frames
 df.longestGPU <- do.call(rbind, matcheddatalist)
+
+cache('df.longestGPU')
+cache('task.x.y')

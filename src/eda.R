@@ -198,11 +198,13 @@ ggplot(df.longestexecutions, aes(x=taskId, y=totalRenderTime)) +
   theme(axis.text.x = element_text(angle = 90))
 
 #need to integrate gpu on hostname and time
-
-#need to limit the size of df-execution before getting gpu stats, get lowest performing quartile?
-#add in the gpu on hostname = gpu.hostname and start = gpu.timestamp
-summary(gpu)
-summary(df.longestexecutions)
-df.exectionGPU = left_join(df.longestexecutions, gpu, by = c("hostname" = "hostname", "start" = "starttime"))
-summary(df.executionGPU)
+#library('ProjectTemplate')
+#load.project()
+#takes ages so get from cache
+gpu <- cache('gpu')
+task.x.y <- cache('task.x.y')
+df.gpustats <- cache('df.gpustats')
+df.execution <- cache('df.execution')
+df.longestexecutions <- cache('df.longestexecutions')
+df.longestGPU <- cache('df.longestGPU')
 

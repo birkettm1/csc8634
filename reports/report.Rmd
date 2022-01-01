@@ -122,7 +122,21 @@ Those hosts above the upper quartile were taken as the dataset of long running h
 
 This is still a lot of records to investigate.
 
-In an effort to reduce the volume of records the number of tasks in this long running set was investigated, by the maximum recurrence of a taskId was 2, so this was ignored. I then attempted to take the upper quartile of the long running hosts which results in 843 records to work with, and attempt to relate the GPU dataset to allow identification of the specific GPU being used in the long running tasks. 
+In an effort to reduce the volume of records the number of tasks in this long running set was investigated, by the maximum recurrence of a taskId was 2, so this was ignored. I then attempted to take the upper quartile of the long running hosts which results in 843 records to work with, and attempt to relate the GPU dataset to allow identification of the specific GPU being used in the long running tasks.
+
+Upon investigation of the GPU dataset, it was found that virtually all host names were in the long running hosts top percentiles, and multiple GPU cards were assigned to each hostname and were "active" between the start and end times. It was assumed that a task to render a certain plot was split across all GPU on the host, so the render time was appended to the row identifying each GPU. This gives us the following dataset to work with:
+
+* Timestamp
+* Hostname
+* GPU Serial
+* GPU UUID
+* Power Draw (Watts)
+* GPU Temp (C)
+* GPU Util Percent
+* GPU Mem Util Percent
+* Total Render Time
+
+with a total of X records to investigate.
 
 ## Modelling 
 \textcolor{red}{(technique, test design, build, assess) R-Shiny}

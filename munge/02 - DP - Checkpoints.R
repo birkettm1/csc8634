@@ -66,3 +66,4 @@ df.longesthosts <- select(filter(df.longrendercount, n>=longrenderupper),hostnam
 df.longestexecutions <- merge(df.longesthosts, df.execution, by="hostname")
 df.longestexecutions <- filter(df.longestexecutions, totalRenderTime > mean(df.longestexecutions$totalRenderTime) + sd(df.longestexecutions$totalRenderTime))
 
+cache('df.longestexectutions')

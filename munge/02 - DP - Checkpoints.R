@@ -1,5 +1,5 @@
 #munge checkpoint execution times
-
+#this creates df.total_render, 
 #just get the total render
 df.total_render = filter(application.checkpoints , eventName == "TotalRender")
 
@@ -44,3 +44,25 @@ for (row in 1:nrow(df.total_render)) {
 }
 
 cache('df.execution')
+
+#dome some feature engineering
+renderTimeSd <- sd(df.execution$totalRenderTime)
+upperQuartileValue <- mean(df.execution$totalRenderTime) + renderTimeSd
+lowerQuartileValue <- mean(df.execution$totalRenderTime) - renderTimeSd
+
+#get the upper quartile long renders
+df.longrender <- select(filter(df.execution, totalRenderTime > upperQuartileValue),start,end,hostname,jobId,taskId,totalRenderTime)
+
+#count by hostname
+df.longrendercount <- df.longrender %>% count(hostname)
+
+#longest hosts
+longrendercountmean <- mean(df.longrendercount$n)  
+longrendercountsd <- sd(df.longrendercount$n)
+longrenderupper <-longrendercountmean + longrendercountsd
+df.longesthosts <- select(filter(df.longrendercount, n>=longrenderupper),hostname)
+
+#complete the dataset for longest executions
+df.longestexecutions <- merge(df.longesthosts, df.execution, by="hostname")
+df.longestexecutions <- filter(df.longestexecutions, totalRenderTime > mean(df.longestexecutions$totalRenderTime) + sd(df.longestexecutions$totalRenderTime))
+

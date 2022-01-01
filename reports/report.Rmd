@@ -95,7 +95,34 @@ From this investigation phase it is my intention to pull together a complete dat
 ## Data Preparation 
 \textcolor{red}{(select, clean, construct, integrate, format)}
 \textcolor{red}{What, concisely, did you do?}
+To identify the lowest performing GPU cards some feature engineering was carried on the application checkpoint dataset. The TotalRenderTime measure was identified as a measure of execution time, so a dataset was created showing the the hostname, start and end time of the task and total execution time by casting to date and then subracting the end time from the start time. An examination of this dataset gives a mean render time of 42.61 second and a standard deviation of 6.5 seconds. The distribution shown in Figure 3 with the mean and the upper and lower quartiles a 1 standard deviation. It can be clearly seen that there is a tail on the execution times from the upper quartile at 49.1 seconds to a max of 93.6 seconds.
 
+
+```{ r RenderTimeDistribution, out.width="100%", fig.cap="Distribution of Mean Total Render Time"}
+
+#plot the distribution
+ggplot(df.execution, aes(x=totalRenderTime)) + 
+  geom_histogram(aes(y=..density..),      # Histogram with density instead of count on y-axis
+                 binwidth=1,
+                 colour="black", fill="white") +
+  geom_density(alpha=.2, fill="#FF6666") +  # Overlay with transparent density plot
+  geom_vline(aes(xintercept=mean(totalRenderTime, na.rm=T)),   # Ignore NA values for mean
+           color="red", linetype="solid", size=1) + 
+  geom_vline(aes(xintercept=mean(totalRenderTime + renderTimeSd, na.rm=T)),   # Ignore NA values for upper sd
+             color="red", linetype="dashed", size=1) + 
+  geom_vline(aes(xintercept=mean(totalRenderTime - renderTimeSd, na.rm=T)),   # Ignore NA values for lowersd
+             color="red", linetype="dashed", size=1) + 
+  labs(title="Distribution of Total Render Time in 1 Second Bins", y="Density", x="Render Time in Seconds") + 
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu")
+  
+``` 
+
+Those hosts above the upper quartile were taken as the dataset of long running hosts. The number of occurance of each host within the upper quartile was then counted which have a mean of 8.0 times and a standard deviation of 6.01. Therefore the upper quartile of this was also taken, so any host which occured in the upper quartile of long running hosts more than 14.02 times was regarded as the final dataset for investigation. This yielded a dataset of 154 records, which when joined back to the execution time table gives 9563 tasks on the longest running hosts, complete with total render time. 
+
+This is still a lot of records to investigate.
+
+In an effort to reduce the volume of records the number of tasks in this long running set was investigated, by the maximum recurrence of a taskId was 2, so this was ignored. I then attempted to take the upper quartile of the long running hosts which results in 843 records to work with, and attempt to relate the GPU dataset to allow identification of the specific GPU being used in the long running tasks. 
 
 ## Modelling 
 \textcolor{red}{(technique, test design, build, assess) R-Shiny}
@@ -106,6 +133,7 @@ From this investigation phase it is my intention to pull together a complete dat
 \textcolor{red}{(evaluate, review, next steps)}
 \textcolor{red}{How successful has it been? Provide evidence, using appropriate evaluation methodologies, and comment on the strengths/weaknesses of your evidence in answering this question. What are the future implications for work in this area? If applicable, which areas of extension work are now possible due to the foundational work you have performed in this project?}
 
+The methodology of upper quartile of hosts followed by upper quartile of tasks is questionable. Needs research.
 
 ## References
 Alessandro V. Papadopoulos, Senior Member, IEEE, Laurens Versluis, Member, IEEE, Andre Bauer, Nikolas Herbst, Member, IEEE, Joakim von Kistowski, Member, IEEE, Ahmed Ali-Eldin, Cristina L.

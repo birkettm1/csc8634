@@ -116,6 +116,8 @@ plot.qq(gpu, "gpuMemUtilPerc") #qq
 \textcolor{red}{(select, clean, construct, integrate, format)}
 \textcolor{red}{What, concisely, did you do?}
 
+#df.execution <- cache('df.execution')
+#clear.cache('df.execution')
 library('ProjectTemplate')
 load.project()
 
@@ -127,8 +129,6 @@ df.execution %>% count(hostname)
 length(df.execution$totalRenderTime)
 min(df.execution$totalRenderTime) 
 max(df.execution$totalRenderTime)
-
-#update to say if the row is upper or lower quartile based on sd
 mean(df.execution$totalRenderTime)
 renderTimeSd <- sd(df.execution$totalRenderTime)
 upperQuartileValue <- mean(df.execution$totalRenderTime) + renderTimeSd
@@ -155,15 +155,54 @@ filter(df.execution, totalRenderTime > upperQuartileValue)
 
 #get the 95th quartile
 ninequantile <- quantile(df.execution$totalRenderTime, .95) 
-df.longrender <- select(filter(df.execution, totalRenderTime > ninequantile),start,end,hostname,jobId,taskId,totalRenderTime)
+
+#get the long render records
+df.longrender <- select(filter(df.execution, totalRenderTime > upperQuartileValue),start,end,hostname,jobId,taskId,totalRenderTime)
 summary(df.longrender)
+
+#count by hostname
 df.longrendercount <- df.longrender %>% count(hostname)
-  
+max(df.longrendercount$n)  
+min(df.longrendercount$n)  
+longrendercountmean <- mean(df.longrendercount$n)  
+longrendercountsd <- sd(df.longrendercount$n)
+longrenderupper <-longrendercountmean + longrendercountsd
+df.longesthosts <- select(filter(df.longrendercount, n>=longrenderupper),hostname)
+
+#get the execution for the longest hosts
+df.longestexecutions <- merge(df.longesthosts, df.execution, by="hostname")
+summary(df.longestexecutions)
+head(df.longestexecutions)
+
+#get the top longest tasks
+df.longestexecutions <- filter(df.longestexecutions, totalRenderTime > mean(df.longestexecutions$totalRenderTime) + sd(df.longestexecutions$totalRenderTime))
+summary(df.longestexecutions)
+arrange(df.longestexecutions, desc(totalRenderTime))
+df.longestexecutions %>% count(jobId)
+df.longestexecutions %>% count(taskId)
+df.longestexecutions %>% count(hostname)
+
+ggplot(data=df.longestexecutions, aes(x=taskId, y=totalRenderTime, group=1)) +
+  geom_line() +
+  geom_point() #+ 
+  #ylim(c(0,100))
+
+#jobId
+ggplot(df.longestexecutions, aes(x=jobId, y=totalRenderTime)) + 
+  geom_boxplot()  + 
+  theme(axis.text.x = element_text(angle = 90))
+
+#taskId
+ggplot(df.longestexecutions, aes(x=taskId, y=totalRenderTime)) + 
+  geom_boxplot()  + 
+  theme(axis.text.x = element_text(angle = 90))
+
+#need to integrate gpu on hostname and time
+
 #need to limit the size of df-execution before getting gpu stats, get lowest performing quartile?
 #add in the gpu on hostname = gpu.hostname and start = gpu.timestamp
 summary(gpu)
-
-
-#df.executionGPU = merge(df.execution, gpu, by.x=c('start', 'hostname'), by.y=c('timestamp', 'hostname'))
-#df.executionGPU = merge(df.execution, gpu, by="hostname")
+summary(df.longestexecutions)
+df.exectionGPU = left_join(df.longestexecutions, gpu, by = c("hostname" = "hostname", "start" = "starttime"))
+summary(df.executionGPU)
 

@@ -198,8 +198,8 @@ ggplot(df.longestexecutions, aes(x=taskId, y=totalRenderTime)) +
   theme(axis.text.x = element_text(angle = 90))
 
 #need to integrate gpu on hostname and time
-#library('ProjectTemplate')
-#load.project()
+library('ProjectTemplate')
+load.project()
 #takes ages so get from cache
 gpu <- cache('gpu')
 task.x.y <- cache('task.x.y')
@@ -208,3 +208,15 @@ df.execution <- cache('df.execution')
 df.longestexecutions <- cache('df.longestexecutions')
 df.longestGPU <- cache('df.longestGPU')
 
+summary(df.longestGPU)
+head(df.longestGPU)
+
+#get slimmer dataset
+df.longestGPUSlim <- select(df.longestGPU, hostname, gpuSerial, hostLongestRenderTime, starttime)
+arrange(df.longestGPUSlim, desc(hostLongestRenderTime))
+unique(df.longestGPUSlim$gpuSerial)
+unique(df.longestGPUSlim$hostname)
+
+#have a lot of rows due to starttime being included in miliseconds
+#so get the hostname, gpuserial and the execution time of that task on the host
+distinct(df.longestGPUSlim, hostname, gpuSerial, hostLongestRenderTime)

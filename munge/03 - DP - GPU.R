@@ -15,13 +15,18 @@ for (row in 1:nrow(df.longestexecutions)) {
   longhost <- df.longestexecutions[row, "hostname"]
   longstart <- df.longestexecutions[row, "start"]
   longend <- df.longestexecutions[row, "end"]
+  longJobId <- df.longestexecutions[row, "jobId"]
+  longTaskId <- df.longestexecutions[row, "taskId"]
   
   #get everything executed on that host in that timespan
   match <- filter(gpu, hostname == longhost & starttime >= longstart & starttime <= longend)
   
   #get the first executed job and assume thats the first task
   #match <- arrange(match, timestamp) %>% filter(row_number()==1)
-  match$totalRenderTime = longhost <- df.longestexecutions[row, "totalRenderTime"]
+  match$hostLongestRenderTime <- df.longestexecutions[row, "totalRenderTime"]
+  
+  match$jobId = longJobId
+  match$taskId = longTaskId
   
   #add to the list
   matcheddatalist[[row]] <- match

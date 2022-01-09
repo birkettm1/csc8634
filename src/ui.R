@@ -11,19 +11,23 @@ ui <- fluidPage(
     sidebarPanel(
       
       # Input: Slider for the number of bins ----
-      sliderInput(inputId = "bins",
-                  label = "Number of bins:",
-                  min = 1,
-                  max = 50,
-                  value = 30)
+      sliderInput(inputId = "RenderTime",
+                  label = "Longest Render Time:",
+                  min = as.double(min(df.longestGPUGrid$hostLongestRenderTime)),
+                  max = as.double(max(df.longestGPUGrid$hostLongestRenderTime)),
+                  value = 52.118999, step = 1),
       
+      selectInput(inputId = "hostname", label="Host Name", choices = df$hostname),
+      
+      selectInput(inputId = "gpuuid", label="GPU ID", choices = df$gpuUUID)
     ),
     
     # Main panel for displaying outputs ----
     mainPanel(
       
       # Output: Histogram ----
-      plotOutput(outputId = "distPlot")
+      plotOutput(outputId = "hostPlot"),
+      plotOutput(outputId = "gpuPlot")
       
     )
   )

@@ -274,6 +274,9 @@ filter(df.taskcount, n==10)
 select(df.longestGPUGrid, x, y, XY)
 filter(df.longestGPUGrid %>% count(XY), n>1)
 
+df.longestGPUGrid$XY
+min(df.longestGPUGrid$hostLongestRenderTime)
+max(df.longestGPUGrid$hostLongestRenderTime)
 #grid vs render time
 ggplot(df.longestGPUGrid, aes(XY, hostLongestRenderTime)) + 
   geom_point() +
@@ -310,6 +313,16 @@ ggplot(df.longestGPUGrid, aes(gpuTempC, gpuUtilPerc )) +
 ggplot(df.longestGPUGrid, aes(gpuTempC, gpuMemUtilPerc)) + 
   geom_point() +
   labs(title="Render Time by GPU Memory Percent Utilised", y="Render Time", x = "Memory % Utilised") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#hostname by totalrendertime
+df.longestGPUGrid$hostname
+ggplot(df.longestGPUGrid, aes(hostname, hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="Render Time by GPU Memory Percent Utilised", y="Render Time", x = "Memory % Utilised") +
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
   theme_bw() + 
   scale_fill_brewer(palette="PuBu") +
   theme(axis.text.x = element_text(angle = 90))

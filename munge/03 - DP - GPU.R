@@ -4,7 +4,7 @@ gpu$starttime = sapply(gpu$timestamp, function(i){
   x = parse_date_time(i, orders="YmdHMS")
 })
 
-#cache('gpu')
+cache('gpu')
 
 matcheddatalist = list()
 
@@ -35,12 +35,12 @@ for (row in 1:nrow(df.longestexecutions)) {
 #merge the data frames
 df.longestGPU <- do.call(rbind, matcheddatalist)
 
-#cache('df.longestGPU')
-#cache('task.x.y')
+cache('df.longestGPU')
+cache('task.x.y')
 
 #create slim dataset
 df.longestGPUSlim <- select(df.longestGPU, hostname, gpuSerial, hostLongestRenderTime)
-#cache('df.longestGPUSlim')
+cache('df.longestGPUSlim')
 
 #jobs by render time
 #longest running job time = 78.751 seconds

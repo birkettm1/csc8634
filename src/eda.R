@@ -270,3 +270,46 @@ longestHostTime = df.jobsbyrendertime[1,3]
 #gpuserial 320118119842 
 #running time 78.751 sec
 
+filter(df.taskcount, n==10)
+select(df.longestGPUGrid, x, y, XY)
+filter(df.longestGPUGrid %>% count(XY), n>1)
+
+#grid vs render time
+ggplot(df.longestGPUGrid, aes(XY, hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="Render Time by Grid Reference", y="Render Time", x = "Grid Reference(XY)") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#render time vs cpu state powerDraw
+ggplot(df.longestGPUGrid, aes(powerDrawWatt , hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="Render Time by GPU Power Draw", y="Render Time", x = "Power Draw in Watts") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#render time vs cpu state temp
+ggplot(df.longestGPUGrid, aes(gpuTempC, hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="Render Time by GPU Temp", y="Render Time", x = "Temp in C") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#render time vs cpu state GPU Utilised Percent
+ggplot(df.longestGPUGrid, aes(gpuTempC, gpuUtilPerc )) + 
+  geom_point() +
+  labs(title="Render Time by GPU Percent Utilised", y="Render Time", x = "% Utilised") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#render time vs cpu state GPU Memory Percent Used
+ggplot(df.longestGPUGrid, aes(gpuTempC, gpuMemUtilPerc)) + 
+  geom_point() +
+  labs(title="Render Time by GPU Memory Percent Utilised", y="Render Time", x = "Memory % Utilised") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))

@@ -212,10 +212,25 @@ summary(df.longestGPU)
 head(df.longestGPU)
 
 #get slimmer dataset
-df.longestGPUSlim <- select(df.longestGPU, hostname, gpuSerial, hostLongestRenderTime, starttime)
+df.longestGPUSlim <- select(df.longestGPU, hostname, gpuSerial, hostLongestRenderTime)
 arrange(df.longestGPUSlim, desc(hostLongestRenderTime))
 unique(df.longestGPUSlim$gpuSerial)
 unique(df.longestGPUSlim$hostname)
+
+#do some counts
+arrange(df.longestGPUSlim %>% count(hostname), desc(n))
+arrange(df.longestGPUSlim %>% count(gpuSerial), desc(n))
+arrange(df.longestGPUSlim %>% count(hostname, gpuSerial), desc(n))
+
+#longest running host
+#longest running job time = 78.751 seconds
+df.jobsbyrendertime = distinct(arrange(df.longestGPUSlim, desc(hostLongestRenderTime)), hostname, gpuSerial, hostLongestRenderTime)
+longestHostname = df.jobsbyrendertime[1,1]
+longestHostTime = df.jobsbyrendertime[1,3]
+
+#gpuid on the longest running job
+df.longestrunningjob = filter(df.jobsbyrendertime, hostname == longestHostname)
+
 
 #have a lot of rows due to starttime being included in miliseconds
 #so get the hostname, gpuserial and the execution time of that task on the host

@@ -1,5 +1,6 @@
 library('ProjectTemplate')
 load.project()
+#clear.cache()
 
 for (dataset in project.info$data)
 {
@@ -200,6 +201,7 @@ ggplot(df.longestexecutions, aes(x=taskId, y=totalRenderTime)) +
 #need to integrate gpu on hostname and time
 library('ProjectTemplate')
 load.project()
+
 #takes ages so get from cache
 gpu <- cache('gpu')
 task.x.y <- cache('task.x.y')
@@ -207,31 +209,64 @@ df.gpustats <- cache('df.gpustats')
 df.execution <- cache('df.execution')
 df.longestexecutions <- cache('df.longestexecutions')
 df.longestGPU <- cache('df.longestGPU')
+df.longestGPUSlim <- cache('df.longestGPUSlim')
+df.jobsbyrendertime <- cache('df.jobsbyrendertime')
 
 summary(df.longestGPU)
 head(df.longestGPU)
 
 #get slimmer dataset
-df.longestGPUSlim <- select(df.longestGPU, hostname, gpuSerial, hostLongestRenderTime)
+df.longestGPUSlim <- select(df.longestGPU, hostname, gpuSerial, gpuUUID, hostLongestRenderTime)
 arrange(df.longestGPUSlim, desc(hostLongestRenderTime))
 unique(df.longestGPUSlim$gpuSerial)
 unique(df.longestGPUSlim$hostname)
+summary(df.longestGPUSlim)
 
 #do some counts
 arrange(df.longestGPUSlim %>% count(hostname), desc(n))
+plot.continuous(df.longestGPUSlim %>% count(hostname), "hostname")
+
+#plot the occurrence of hosts
+ggplot(data=df.longestGPUSlim %>% count(hostname), aes(as.character(hostname), y=n, group=1)) +
+  geom_line() +
+  labs(title="Number of occurances of hostname in the top percentile longest running tasks", 
+       y="Count", x = "Hostname") 
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
 arrange(df.longestGPUSlim %>% count(gpuSerial), desc(n))
-arrange(df.longestGPUSlim %>% count(hostname, gpuSerial), desc(n))
+plot.continuous(df.longestGPUSlim %>% count(gpuSerial), "gpuSerial")
+
+#plot the occurrence of gpus
+ggplot(data=df.longestGPUSlim %>% count(gpuSerial), aes(as.character(gpuSerial), y=n, group=1)) +
+  geom_line() +
+  labs(title="Number of occurances of GPU in the top percentile longest running tasks", 
+       y="Count", x = "GPU Serial") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#plot the occurrence of gpus
+ggplot(data=df.longestGPUSlim %>% count(gpuUUID), aes(as.character(gpuUUID), y=n, group=1)) +
+  geom_line() +
+  labs(title="Number of occurances of GPU in the top percentile longest running tasks", 
+       y="Count", x = "GPU Serial") +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
 
 #longest running host
 #longest running job time = 78.751 seconds
-df.jobsbyrendertime = distinct(arrange(df.longestGPUSlim, desc(hostLongestRenderTime)), hostname, gpuSerial, hostLongestRenderTime)
+df.jobsbyrendertime = distinct(df.longestGPUSlim %>%
+                                 group_by(hostname) %>%
+                                 arrange(desc(hostLongestRenderTime)), hostname, gpuSerial, hostLongestRenderTime)
+
 longestHostname = df.jobsbyrendertime[1,1]
+longestGPUSerial = df.jobsbyrendertime[1,2]
 longestHostTime = df.jobsbyrendertime[1,3]
 
-#gpuid on the longest running job
-df.longestrunningjob = filter(df.jobsbyrendertime, hostname == longestHostname)
+#hostname 95b4ae6d890e4c46986d91d7ac4bf08200000G 
+#gpuserial 320118119842 
+#running time 78.751 sec
 
-
-#have a lot of rows due to starttime being included in miliseconds
-#so get the hostname, gpuserial and the execution time of that task on the host
-distinct(df.longestGPUSlim, hostname, gpuSerial, hostLongestRenderTime)

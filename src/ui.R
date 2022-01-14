@@ -17,7 +17,7 @@ ui <- fluidPage(
       
       # Input: Slider for the number of bins ----
       sliderInput(inputId = "RenderTime",
-                  label = "Longest Render Time:",
+                  label = "Longest Render Time (secs):",
                   min = as.double(min(df.longestGPUGrid$hostLongestRenderTime)),
                   max = as.double(max(df.longestGPUGrid$hostLongestRenderTime)),
                   value = c(65), step = 1)
@@ -29,12 +29,15 @@ ui <- fluidPage(
     
     # Main panel for displaying outputs ----
     mainPanel(
-
+      
+      tags$h4("Selected Records"),
       span(textOutput("taskCount"), style="color:red"),
       span(textOutput("renderTime"), style="color:red"),
 
       # Output: Histogram ----
       plotOutput(outputId = "hostPlot"),
+      
+      tags$h5("GPU UIDs used"),
       dataTableOutput("gpuList")
       
     )

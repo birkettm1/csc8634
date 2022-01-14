@@ -27,24 +27,17 @@ server <- function(input, output, session) {
         scale_fill_brewer(palette="PuBu") +
         theme(axis.text.x = element_text(angle = 90))
       
-      #output list of gpuuid
-      output$gpuList <- renderDataTable({
-        unique(df.longestGPUGrid$gpuUUID)
-      })
+
     }
   })
   
-  output$gpuPlot <- renderPlot({
+  #output list of gpuuid
+  output$gpuList <- renderDataTable({
+    filterJobId <- unique(select(filter(df.longestGPUGrid, level==input$level), jobId.x))
+    df <- filter(df.longestGPUGrid, jobId.x == filterJobId) #filter by level
+    df <- filter(df.longestGPUGrid, hostLongestRenderTime >= input$RenderTime) #filter by render time
     
-    #df <- filter(df.longestGPUGrid, hostLongestRenderTime >= input$RenderTime)
-    
-    #ggplot(df, aes(gpuUUID, hostLongestRenderTime)) + 
-    #  geom_col() +
-    #  labs(title="GPU by Render Time", y="Render Time", x = "GPU UID") +
-    #  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
-    #  theme_bw() + 
-    #  scale_fill_brewer(palette="PuBu") +
-    #  theme(axis.text.x = element_text(angle = 90))
+    unique(select(df, hostname, gpuUUID, XY, hostLongestRenderTime))
   })
   
   

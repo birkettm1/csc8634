@@ -439,3 +439,4 @@ ggplot(df.longestjob, aes(XY, hostLongestRenderTime)) +
 
 #unique gpuuid
 unique(df.longestGPUGrid$gpuUUID)
+unique(select(df.longestGPUGrid, hostname, gpuUUID, XY, hostLongestRenderTime))

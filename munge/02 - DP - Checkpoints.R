@@ -43,7 +43,6 @@ for (row in 1:nrow(df.total_render)) {
   }
 }
 
-cache('df.execution')
 
 #dome some feature engineering
 renderTimeSd <- sd(df.execution$totalRenderTime)
@@ -62,7 +61,6 @@ longrendercountsd <- sd(df.longrendercount$n)
 longrenderupper <-longrendercountmean + longrendercountsd
 df.longesthosts <- select(filter(df.longrendercount, n>=longrenderupper),hostname)
 
-#complete the dataset for longest executions
+#complete the dataset for longest executionsa
 df.longestexecutions <- merge(df.longesthosts, df.execution, by="hostname")
 df.longestexecutions <- filter(df.longestexecutions, totalRenderTime > mean(df.longestexecutions$totalRenderTime) + sd(df.longestexecutions$totalRenderTime))
-cache('df.longestexecutions')

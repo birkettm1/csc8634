@@ -2,7 +2,7 @@
 ui <- fluidPage(
   
   # App title ----
-  titlePanel("Hello Shiny!"),
+  titlePanel("Multiple GPU node map rendering system, execution stats."),
   
   # Sidebar layout with input and output definitions ----
   sidebarLayout(
@@ -10,24 +10,32 @@ ui <- fluidPage(
     # Sidebar panel for inputs ----
     sidebarPanel(
       
+      # Input: Level to be investigated
+      selectInput(inputId = "level", label="Level", 
+                  choices = unique(df.longestGPUGrid$level), 
+                  selected=12),
+      
       # Input: Slider for the number of bins ----
       sliderInput(inputId = "RenderTime",
                   label = "Longest Render Time:",
                   min = as.double(min(df.longestGPUGrid$hostLongestRenderTime)),
                   max = as.double(max(df.longestGPUGrid$hostLongestRenderTime)),
-                  value = 52.118999, step = 1),
+                  value = c(65), step = 1)
       
-      selectInput(inputId = "hostname", label="Host Name", choices = df$hostname),
+      #selectInput(inputId = "hostname", label="Host Name", choices = df$hostname),
       
-      selectInput(inputId = "gpuuid", label="GPU ID", choices = df$gpuUUID)
+      #selectInput(inputId = "gpuuid", label="GPU ID", choices = df$gpuUUID)
     ),
     
     # Main panel for displaying outputs ----
     mainPanel(
-      
+
+      span(textOutput("taskCount"), style="color:red"),
+      span(textOutput("renderTime"), style="color:red"),
+
       # Output: Histogram ----
       plotOutput(outputId = "hostPlot"),
-      plotOutput(outputId = "gpuPlot")
+      dataTableOutput("gpuList")
       
     )
   )

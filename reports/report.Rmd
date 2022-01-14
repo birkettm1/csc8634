@@ -13,20 +13,10 @@ knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
 
 ``` {r loadproject, include=FALSE}
-  gpu <- cache('gpu')
-  task.x.y <- cache('task.x.y')
-  df.gpustats <- cache('df.gpustats')
-  df.execution <- cache('df.execution')
-  df.longestexecutions <- cache('df.longestexecutions')
-  df.longestGPU <- cache('df.longestGPU')
-  df.longestGPUSlim <- cache('df.longestGPUSlim')
-  df.jobsbyrendertime <- cache('df.jobsbyrendertime')
-  df.longestGPUGrid <- cache('df.longestGPUGrid')
-  
-  #library('ProjectTemplate')
+  library('ProjectTemplate')
   #load.project()
-
-
+  cache.project()
+  #clear.cache()
 ```
 
 ## Introduction
@@ -219,7 +209,16 @@ ggplot(df.longestGPUGrid, aes(gpuTempC, hostLongestRenderTime)) +
   scale_fill_brewer(palette="PuBu") +
   theme(axis.text.x = element_text(angle = 90))
 ```
-In an effort to find some meaningful data a dashboard was created.
+In an effort to find some meaningful data a dashboard was created. Before creating the dashboard, the dataset was investigated for the relationships within the dataset, the following was concluded:
+
+* There are three jobIds which indicate the level of the grid being rendered. The busiest level is level 12.
+* Each job has many tasks, which pertain to each job square being rendered.
+* Each task has one grid square.
+* One task is executed on one host machine.
+* One task is executed on one GPU care on one host machine.
+* Each GPU is in the dataset for many seconds of the longest render time.
+
+This it was concluded  if we can select the Level of the render to be investigated, then we can show the grids being rendered, the the 1:1 hosts and GPU being used to render it.
 
 
 ## Evaluation 

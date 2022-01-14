@@ -1,5 +1,6 @@
 library('ProjectTemplate')
 load.project()
+#cache.project()
 #clear.cache()
 
 for (dataset in project.info$data)
@@ -321,8 +322,120 @@ ggplot(df.longestGPUGrid, aes(gpuTempC, gpuMemUtilPerc)) +
 df.longestGPUGrid$hostname
 ggplot(df.longestGPUGrid, aes(hostname, hostLongestRenderTime)) + 
   geom_point() +
-  labs(title="Render Time by GPU Memory Percent Utilised", y="Render Time", x = "Memory % Utilised") +
+  labs(title="Render Time by Hostname", y="Render Time", x = "Hostname") +
   scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
   theme_bw() + 
   scale_fill_brewer(palette="PuBu") +
   theme(axis.text.x = element_text(angle = 90))
+
+#grid by rendertime
+ggplot(df.longestGPUGrid, aes(XY, hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="Grid by Render Time", y="Render Time", x = "XY") +
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#taskId by rendertime
+ggplot(df.longestGPUGrid, aes(taskId, hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="TaskId by Render Time", y="Render Time", x = "Task") +
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#jobID by rendertime
+ggplot(df.longestGPUGrid, aes(jobId.x, hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="JobId by Render Time", y="Render Time", x = "Job") +
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#so, one job has many tasks, one task has one host, one host has one gpu
+#jobID by taskId
+ggplot(df.longestGPUGrid, aes(jobId.x, taskId)) + 
+  geom_point() +
+  labs(title="JobId by TaskID", y="TaskId", x = "JobId") +
+  #scale_y_discrete(label=function(y) substring(y,nchar(y)-5,nchar(y))) + 
+  #scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#jobID by gpuuid
+ggplot(df.longestGPUGrid, aes(gpuUUID, taskId)) + 
+  geom_point() +
+  labs(title="JobId by GPU UID", y="GPU UID", x = "TaskId") +
+  scale_y_discrete(label=function(y) substring(y,nchar(y)-5,nchar(y))) + 
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#findings
+#there is a clear longest running job at level 12
+#so level 12 = jobId '1024-lvl12-7e026be3-5fd0-48ee-b7d1-abd61f747705', which has many tasks
+df.longestGPUGrid %>% count(jobId.x)
+df.longestGPUGrid %>% count(level)
+
+df.longestjob = filter(df.longestGPUGrid, jobId.x == '1024-lvl12-7e026be3-5fd0-48ee-b7d1-abd61f747705')
+df.longestjob %>% count(taskId) #the longest job has many tasks
+df.longestjob %>% count(XY) #the longest job has many grids
+df.longestjob %>% count(taskId, XY) #each task has one grid
+df.longestjob %>% count(hostname) #the longest job is executed on many hosts
+df.longestjob %>% count(taskId, hostname) #one task is executed on one host
+df.longestjob %>% count(taskId, gpuUUID) #one task is executed on one GPU for that task
+df.longestjob %>% count(gpuUUID, hostname) #one gpu is on one host for many seconds
+
+ggplot(df.longestjob, aes(gpuUUID, hostname)) + 
+  geom_point() +
+  labs(title="GPU by TaskId", y="GPU UID", x = "TaskId") +
+  scale_y_discrete(label=function(y) substring(y,nchar(y)-5,nchar(y))) + 
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+summary(df.longestjob)
+ggplot(df.longestjob, aes(gpuUUID, hostLongestRenderTime)) + 
+  geom_boxplot() +
+  labs(title="GPU by Render Time", y="Render Time", x = "GPU") +
+  #scale_y_discrete(label=function(y) substring(y,nchar(y)-5,nchar(y))) + 
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#for rshiny
+#get jobId from level
+unique(df.longestGPUGrid$level)
+unique(select(filter(df.longestGPUGrid, level=="12"), jobId.x))
+
+#taskCount by level
+df.longestjob %>% count()
+
+#grid by rendertime
+ggplot(df.longestjob, aes(XY, hostLongestRenderTime)) + 
+  geom_boxplot() +
+  labs(title="Grid by Render Time", y="Render Time", x = "Grid") +
+  #scale_y_discrete(label=function(y) substring(y,nchar(y)-5,nchar(y))) + 
+  #scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+ggplot(df.longestjob, aes(XY, hostLongestRenderTime)) + 
+  geom_point() +
+  labs(title="Grid by Render Time", y="Render Time", x = "Grid") +
+  #scale_y_discrete(label=function(y) substring(y,nchar(y)-5,nchar(y))) + 
+  #scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
+  theme_bw() + 
+  scale_fill_brewer(palette="PuBu") +
+  theme(axis.text.x = element_text(angle = 90))
+
+#unique gpuuid
+unique(df.longestGPUGrid$gpuUUID)

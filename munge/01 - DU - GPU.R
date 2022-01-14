@@ -26,5 +26,3 @@ df.gpustats <- rbind(df.gpustats, powerdraw)
 df.gpustats <- rbind(df.gpustats, temp)
 df.gpustats <- rbind(df.gpustats, util)
 df.gpustats <- rbind(df.gpustats, mem)
-
-cache('df.gpustats')

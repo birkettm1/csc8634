@@ -218,7 +218,7 @@ In an effort to find some meaningful data a dashboard was created. Before creati
 * One task is executed on one GPU care on one host machine.
 * Each GPU is in the dataset for many seconds of the longest render time.
 
-This it was concluded  if we can select the Level of the render to be investigated, then we can show the grids being rendered, the the 1:1 hosts and GPU being used to render it.
+This it was concluded if we can select the level of the render to be investigated, then we can show the grids being rendered, the the 1:1 hosts and GPU being used to render it. Upon creating the dashboard the level can be selected, the render times of each grid x,y reference and a list of Host and GPU ordered by render time with the longest to the top. This answers the question with the output in the figure below.
 
 
 ## Evaluation 

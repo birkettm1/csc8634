@@ -22,7 +22,7 @@ server <- function(input, output, session) {
       #output grid to render time
       ggplot(df, aes(XY, hostLongestRenderTime)) + 
         geom_point() +
-        labs(title="Grid by Render Time", y="Render Time", x = "Grid") +
+        labs(y="Render Time", x = "Grid") +
         theme_bw() + 
         scale_fill_brewer(palette="PuBu") +
         theme(axis.text.x = element_text(angle = 90))
@@ -37,7 +37,7 @@ server <- function(input, output, session) {
     df <- filter(df.longestGPUGrid, jobId.x == filterJobId) #filter by level
     df <- filter(df.longestGPUGrid, hostLongestRenderTime >= input$RenderTime) #filter by render time
     
-    unique(select(df, hostname, gpuUUID, XY, hostLongestRenderTime))
+    arrange(unique(select(df, hostname, gpuUUID, XY, hostLongestRenderTime)), desc(hostLongestRenderTime))
   })
   
   

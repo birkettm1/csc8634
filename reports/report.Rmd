@@ -20,11 +20,7 @@ This project is an exploratory data analysis (EDA) project into a multiple GPU n
 
 
 ## Business Understanding 
-\textcolor{red}{(Business objectives, assess situation, goals, project plan)}
-
-\textcolor{red}{What is the need for the project? - Justify your choice of response (i.e. the nature of, and your plan for, your project). To give strength to your argument, you should reference to practice elsewhere (e.g. in academic literature, or industry practices.}
-
-Cloud computing has became more commonly used throughout all sectors in the UK since 2000. Multiple providers such as Amazon and Microsoft are now in a marketplace which seeks to offer externally hosted solutions on a Software as a Service (SaaS) basis, along with infrastructure and platforms to provide eslastic, scalable solutions to business need. Along with this there is an opportunity to bring rigour to the measurement and evaluation of cloud computing approaches. A Research and literature review into the subject was carried out via Google Scholar. The terms "statistical rigour, reproducible data analyses, performance evaluation in computer science" produced 7.94 million results. The addition of keywords including "cloud computing" and "supercomputer" brought this down to 44,600 records. A selection of highly referenced documents was reviewed.
+Cloud computing has became more commonly used throughout all sectors in the UK since 2000. Multiple providers such as Amazon and Microsoft are now in a marketplace which seeks to offer externally hosted solutions on a Software as a Service (SaaS) basis, along with infrastructure and platforms to provide elastic, scalable solutions to business need. Along with this there is an opportunity to bring rigour to the measurement and evaluation of cloud computing approaches. A Research and literature review into the subject was carried out via Google Scholar. The terms "statistical rigour, reproducible data analyses, performance evaluation in computer science" produced 7.94 million results. The addition of keywords including "cloud computing" and "supercomputer" brought this down to 44,600 records. A selection of highly referenced documents was reviewed.
 
 Hoefler, Torsten and Belli (2015) state that the "measuring and reporting performance of parallel computers constitute the basis of scientific advancement of high performance computing ... and that the state of practice is lacking". Vitek and Kalibera, 2011, lamented "unrepeatable results, unreproduced results, lack of benchmarks, lack of experimental methodology", and, Papadopoulos et al, 2018, "although these important principles are simple and basic, the cloud community is yet to adopt them broadly to deliver sound measurement of cloud environments.". Given this lack of  rigour, this paper will be approached as a exploratory data analysis project.
 
@@ -53,8 +49,6 @@ The data provided includes the complete cycle of the rendering of each graphic, 
 
 
 ## Data Understanding 
-\textcolor{red}{(collect initial data, describe, explore, data quality)}
-\textcolor{red}{What, concisely, did you do?}
 A quick review of the provided data was completed which identified that the Application Checkpoint and GPU data could be used to examine performance of each card. The data was loaded via ProjectTemplate into R studio and subsequently investigated through examining counts, "Quartile Quartile" plots, and the creation of a gpuStats dataset to create a boxplot of mean and standard deviation on performance statistics.
 
 To begin to identify the execution time, the Application Checkpoint data was investigated, this contains time stamps for each step of the image render process. There are 5 event types each with a start and stop event recorded. These are Total Render - the complete render event, which is made up of 4 events which are, in order, Render, Saving Config, Tiling, Uploading. Initial investigation will cover the total render time, which will indicate the performance of the GPU, should we get that far we can look into the time of each stage of the render. 
@@ -92,12 +86,9 @@ ggplot(df.gpustats, aes(x=variable, y=mean)) +
 From this investigation phase it is my intention to pull together a complete dataset to allow comparison of execution times and GPU performance statistics.
 
 ## Data Preparation 
-\textcolor{red}{(select, clean, construct, integrate, format)}
-\textcolor{red}{What, concisely, did you do?}
-To identify the lowest performing GPU cards some feature engineering was carried on the application checkpoint dataset. The TotalRenderTime measure was identified as a measure of execution time, so a dataset was created showing the the hostname, start and end time of the task and total execution time by casting to date and then subracting the end time from the start time. An examination of this dataset gives a mean render time of 42.61 second and a standard deviation of 6.5 seconds. The distribution shown in Figure 3 with the mean and the upper and lower quartiles a 1 standard deviation. It can be clearly seen that there is a tail on the execution times from the upper quartile at 49.1 seconds to a max of 93.6 seconds.
+To identify the lowest performing GPU cards some feature engineering was carried on the application checkpoint dataset. The Total Render Time measure was identified as a measure of execution time, so a dataset was created showing the the hostname, start and end time of the task and total execution time by casting to date and then subtracting the end time from the start time. An examination of this dataset gives a mean render time of 42.61 second and a standard deviation of 6.5 seconds. The distribution shown in Figure 3 with the mean and the upper and lower quartiles a 1 standard deviation. It can be clearly seen that there is a tail on the execution times from the upper quartile at 49.1 seconds to a max of 93.6 seconds.
 
-
-```{ r RenderTimeDistribution, out.width="100%", fig.cap="Distribution of Mean Total Render Time"}
+``` {r RenderTimeDistribution, out.width="100%", fig.cap="Distribution of Mean Total Render Time"}
 
 #plot the distribution
 ggplot(df.execution, aes(x=totalRenderTime)) + 
@@ -138,11 +129,9 @@ Upon investigation of the GPU dataset, it was found that virtually all host name
 with a total of 23,754 records to investigate.
 
 ## Modelling 
-\textcolor{red}{(technique, test design, build, assess) R-Shiny}
-\textcolor{red}{What, concisely, did you do?}
-For the intial investigation the dataset above was slimmed down to just the hostname, gpu serial name and hosts render time, this dropped out 'duplicate' records which were tenths of a second different. This dataset was than investigated for commonly occurring hosts and GPU. As per the figures below it can be seen that there are multiple occurances of certain hosts and GPU in the longest running tasks data set.
+For the initial investigation the dataset above was slimmed down to just the hostname, gpu serial name and hosts render time, this dropped out 'duplicate' records which were tenths of a second different. This dataset was than investigated for commonly occurring hosts and GPU. As per the figures below it can be seen that there are multiple occurrences of certain hosts and GPU in the longest running tasks data set.
 
-```{ r countOfHosts, out.width="100%", fig.cap="Hostname occurence in longest running tasks."}
+``` {r countOfHosts, out.width="100%", fig.cap="Hostname occurence in longest running tasks."}
 #plot the occurrence of hosts
 ggplot(data=df.longestGPUSlim %>% count(hostname), aes(as.character(hostname), y=n, group=1)) +
   geom_line() +
@@ -153,7 +142,7 @@ ggplot(data=df.longestGPUSlim %>% count(hostname), aes(as.character(hostname), y
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-```{ r countOfGPU, out.width="100%", fig.cap="GPU Serial occurence in longest running tasks."}
+``` {r countOfGPU, out.width="100%", fig.cap="GPU Serial occurence in longest running tasks."}
 #plot the occurrence of gpus
 ggplot(data=df.longestGPUSlim %>% count(gpuSerial), aes(as.character(gpuSerial), y=n, group=1)) +
   geom_line() +
@@ -166,7 +155,7 @@ ggplot(data=df.longestGPUSlim %>% count(gpuSerial), aes(as.character(gpuSerial),
 
 Further investigation of the dataset allows us to glean the hostname of the longest running task, the time and the GPU, which answers the question of "which is the worst performing GPU", in a general way.
 
-```{r WorstPeformingGPU, out.width="100%", fig.cap="Longest running task hostname, serial and time."}
+``` {r WorstPeformingGPU, out.width="100%", fig.cap="Longest running task hostname, serial and time."}
 
 longestHostname = df.jobsbyrendertime[1,1]
 longestGPUSerial = df.jobsbyrendertime[1,2]
@@ -177,7 +166,8 @@ However, this doesn't allow us to properly investigate that dataset, the raw dat
 
 Subsequently, after re-iteration through the understanding and preparation tasks, the taskId and jobId was added to the dataset for investigation, to allow association with the grid being rendered. I will also output an ungrouped dataset for the creation of a dashboard. An investigation of render time by the X, Y grid references as per figure below does not seem to indicate any consistency in certain refs being long render times. We should look at other potential issues.
 
-```{ r RenderByRef, out.width="100%", fig.cap="Longest running task hostname, serial and time."}
+
+``` {r RenderByRef, out.width="100%", fig.cap="Longest running task hostname, serial and time."}
 ggplot(df.longestGPUGrid, aes(XY, hostLongestRenderTime)) + 
   geom_point() +
   labs(title="Render Time by Grid Reference", y="Render Time", x = "Grid Reference(XY)") +
@@ -188,7 +178,7 @@ ggplot(df.longestGPUGrid, aes(XY, hostLongestRenderTime)) +
 
 A similar investigation into the metrics provided for each GPU also indicates no relationship.  In fact percentage utilisation and memory utilisation are null. There is no obvious relationship for Temperature or Power Draw.
 
-```{ r RenderByMetrics, out.width="100%", fig.cap="Render Time vs GPU metrics."}
+``` {r RenderByMetrics, out.width="100%", fig.cap="Render Time vs GPU metrics."}
 #render time vs cpu state powerDraw
 ggplot(df.longestGPUGrid, aes(powerDrawWatt , hostLongestRenderTime)) + 
   geom_point() +
@@ -222,9 +212,6 @@ This it was concluded if we can select the level of the render to be investigate
 It can clearly be seen that the longest execution time is host '95b4ae6d890e4c46986d91d7ac4bf08200000G', GPU ID 'GPU-27b9e817-3cb1-b47b-6107-de113acbffcd' rendering grid '92,107'.
 
 ## Evaluation 
-\textcolor{red}{(evaluate, review, next steps)}
-\textcolor{red}{How successful has it been? Provide evidence, using appropriate evaluation methodologies, and comment on the strengths/weaknesses of your evidence in answering this question. What are the future implications for work in this area? If applicable, which areas of extension work are now possible due to the foundational work you have performed in this project?}
-
 To result in a dataset which my laptop was capable of processing, we have in effect taken the upper quartile of response times, followed by taking a second upper quartile. While taking all of the responses which are above a quartile away from the mean is a sound method of identifying the longest running records I am not entirely comfortable with taking another subset merely to fit with the performance limitations of this machine. 
 
 Also, I would have expected multiple GPU ID cards to be found slowly performing on a host on any given task, but that isn't what the data has provided. I am not entirely sure that taking the cards which are showing some activity within the overall task start and finish time, although on the correct host, have identified the complete set of cards. I am hoping that because of the way I have limited the dataset this has coincidentally produced a 1 to 1 dataset between host and GPU. Given more time and more processing power I would have liked to have investigated the dataset further, and potentially looked to export the data via CSV to a specialist visualisation tool such as PowerBI. I found the time investment in Shiny to be useful without being massively productive.

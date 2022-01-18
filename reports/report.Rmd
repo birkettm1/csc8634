@@ -3,8 +3,6 @@ title: "CSC 8634 - Cloud Computing"
 author: "Marc Birkett"
 date: "17/12/2021"
 output: pdf_document
-classoption:
-- twocolumn
 ---
 
 ``` {r setup, include=FALSE}

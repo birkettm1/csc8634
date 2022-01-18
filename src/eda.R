@@ -3,12 +3,8 @@ load.project()
 #cache.project()
 #clear.cache()
 
-for (dataset in project.info$data)
-{
-  message(paste('Showing top 5 rows of', dataset))
-  print(head(get(dataset)))
-}
-
+#analysis is below
+#open app.R and press reload app to see Shiny visualisation
 
 #This file contains application checkpoint events throughout the execution of the render job
 examine.df(application.checkpoints) 

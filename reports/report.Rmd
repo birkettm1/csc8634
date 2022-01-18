@@ -14,9 +14,7 @@ knitr::opts_knit$set(root.dir= normalizePath('..'))
 
 ``` {r loadproject, include=FALSE}
   library('ProjectTemplate')
-  #load.project()
-  cache.project()
-  #clear.cache()
+  load.project()
 ```
 
 ## Introduction
@@ -220,12 +218,19 @@ In an effort to find some meaningful data a dashboard was created. Before creati
 
 This it was concluded if we can select the level of the render to be investigated, then we can show the grids being rendered, the the 1:1 hosts and GPU being used to render it. Upon creating the dashboard the level can be selected, the render times of each grid x,y reference and a list of Host and GPU ordered by render time with the longest to the top. This answers the question with the output in the figure below.
 
+![Execution Times](../graphs/ExecutionTimesGraph.png)
+![Longest Render Times](../graphs/LongestRenderTimes.png)
+
+It can clearly be seen that the longest execution time is host '95b4ae6d890e4c46986d91d7ac4bf08200000G', GPU ID 'GPU-27b9e817-3cb1-b47b-6107-de113acbffcd' rendering grid '92,107'.
 
 ## Evaluation 
 \textcolor{red}{(evaluate, review, next steps)}
 \textcolor{red}{How successful has it been? Provide evidence, using appropriate evaluation methodologies, and comment on the strengths/weaknesses of your evidence in answering this question. What are the future implications for work in this area? If applicable, which areas of extension work are now possible due to the foundational work you have performed in this project?}
 
-The methodology of upper quartile of hosts followed by upper quartile of tasks is questionable. Needs research.
+To result in a dataset which my laptop was capable of processing, we have in effect taken the upper quartile of response times, followed by taking a second upper quartile. While taking all of the responses which are above a quartile away from the mean is a sound method of identifying the longest running records I am not entirely comfortable with taking another subset merely to fit with the performance limitations of this machine. 
+
+Also, I would have expected multiple GPU ID cards to be found slowly performing on a host on any given task, but that isn't what the data has provided. I am not entirely sure that taking the cards which are showing some activity within the overall task start and finish time, although on the correct host, have identified the complete set of cards. I am hoping that because of the way I have limited the dataset this has coincidentally produced a 1 to 1 dataset between host and GPU. Given more time and more processing power I would have liked to have investigated the dataset further, and potentially looked to export the data via CSV to a specialist visualisation tool such as PowerBI. I found the time investment in Shiny to be useful without being massively productive.
+
 
 ## References
 Alessandro V. Papadopoulos, Senior Member, IEEE, Laurens Versluis, Member, IEEE, Andre Bauer, Nikolas Herbst, Member, IEEE, Joakim von Kistowski, Member, IEEE, Ahmed Ali-Eldin, Cristina L.
@@ -241,23 +246,3 @@ Hoefler, Torsten, and Roberto Belli, 2015, "Scientific benchmarking of parallel 
 Jan Vitek, Tomas Kalibera, 2011, Repeatability, Reproducibility and Rigor in Systems Research  [https://www.cs.kent.ac.uk/pubs/2011/3174/content.pdf](https://www.cs.kent.ac.uk/pubs/2011/3174/content.pdf) Accessed: 21/12/2021
 
 Pete Chapman (NCR), Julian Clinton (SPSS), Randy Kerber (NCR), Thomas Khabaza (SPSS), Thomas Reinartz (DaimlerChrysler), Colin Shearer (SPSS) and Rüdiger Wirth (DaimlerChrysler), 2000, CRISP-DM Step-by-step data mining guide
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

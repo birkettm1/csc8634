@@ -16,18 +16,18 @@ knitr::opts_knit$set(root.dir= normalizePath('..'))
 ```
 
 ## Introduction
-This project is an exploratory data analysis (EDA) project into a multiple GPU node map rendering system. To bring structure to this project the CRISP-DM methodology will be followed as "it is soundly based on the practical, real-world experience of how people conduct data mining projects." (Chapman et al, 2000). To aid organisation and repeatability of the project various packages from the Tidyverse will be used, particularly ReadR, DPlyr, GGPlot2 and ProjectTemplate. The methodology splits a data mining project into 5 stages which will provide structure to this document, these are Business Understanding, Data Understanding, Data Preparation, Modelling and Evaluation.
+This project is an exploratory data analysis (EDA) project into a multiple GPU node map rendering system. To bring structure to this project, the CRISP-DM methodology will be followed as "it is soundly based on the practical, real-world experience of how people conduct data mining projects." (Chapman et al, 2000). To aid organisation and repeatability of the project, various packages from the Tidyverse will be used, particularly ReadR, DPlyr, GGPlot2 and ProjectTemplate. The methodology splits a data mining project into 5 stages which will provide structure to this document, these are Business Understanding, Data Understanding, Data Preparation, Modelling and Evaluation.
 
 
 ## Business Understanding 
-Cloud computing has became more commonly used throughout all sectors in the UK since 2000. Multiple providers such as Amazon and Microsoft are now in a marketplace which seeks to offer externally hosted solutions on a Software as a Service (SaaS) basis, along with infrastructure and platforms to provide elastic, scalable solutions to business need. Along with this there is an opportunity to bring rigour to the measurement and evaluation of cloud computing approaches. A Research and literature review into the subject was carried out via Google Scholar. The terms "statistical rigour, reproducible data analyses, performance evaluation in computer science" produced 7.94 million results. The addition of keywords including "cloud computing" and "supercomputer" brought this down to 44,600 records. A selection of highly referenced documents was reviewed.
+Cloud computing has became more commonly used throughout all sectors in the UK since 2000. Multiple providers such as Amazon and Microsoft are now in a marketplace which seeks to offer externally hosted solutions on a Software as a Service (SaaS) basis, along with infrastructure and platforms to provide elastic, scalable solutions to business need. Along with this, there is an opportunity to bring rigour to the measurement and evaluation of cloud computing approaches. A Research and literature review into the subject was carried out via Google Scholar. The terms "statistical rigour, reproducible data analyses, performance evaluation in computer science" produced 7.94 million results. The addition of keywords including "cloud computing" and "supercomputer" brought this down to 44,600 records. A selection of highly referenced documents was reviewed.
 
 Hoefler, Torsten and Belli (2015) state that the "measuring and reporting performance of parallel computers constitute the basis of scientific advancement of high performance computing ... and that the state of practice is lacking". Vitek and Kalibera, 2011, lamented "unrepeatable results, unreproduced results, lack of benchmarks, lack of experimental methodology", and, Papadopoulos et al, 2018, "although these important principles are simple and basic, the cloud community is yet to adopt them broadly to deliver sound measurement of cloud environments.". Given this lack of  rigour, this paper will be approached as a exploratory data analysis project.
 
 ### Problem Area
-This paper conducts a performance evaluation of terapixel rendering in cloud super computing. The solution was rendering using an Infrastructure as a Service (IaaS) cloud environment and up to 1024 graphical process unit (GPU) nodes which was used to compute a realistic visualisation of Newcastle Upon Tyne and its environmental data as captured by the Newcastle Urban Observatory. The data was subsequently provided for analysis via comma separated value files. There will also subsequently be a dashboard created to allow investigation of the data set.
+This paper conducts a performance evaluation of terapixel rendering in cloud super computing. The solution was rendering using an Infrastructure as a Service (IaaS) cloud environment and up to 1024 graphical process unit (GPU) nodes which were used to compute a realistic visualisation of Newcastle Upon Tyne and its environmental data as captured by the Newcastle Urban Observatory. The data was subsequently provided for analysis via comma separated value files. There will also subsequently be a dashboard created to allow investigation of the data set.
 
-The completion of this paper will contribute to the some of knowledge regarding the measurement and assessment of metrics on cloud based supercomputers.
+The completion of this paper will contribute to the sum of knowledge regarding the measurement and assessment of metrics on cloud based supercomputers.
 
 ### Current Solution
 The project currently demonstrated that it "is feasible to produce a high quality terapixel visualization using a path tracing renderer in under a day using public IaaS cloud GPU nodes. Once generated the terapixel image supports interactive browsing of the city and its data at a range of sensing scales from the whole city to a single desk in a room" (Forshaw, 2021). However, there has been no analysis of the metrics produced by the system regarding performance.
@@ -63,14 +63,14 @@ ggplot(data=df.hostcount, aes(x=hostname, y=n, group=1)) +
   scale_fill_brewer(palette="PuBu")
 ```
 
-In the absence of any continuous data in this table basic data quality checks were carried out, this identified the following:
+In the absence of any continuous data in this table basic data quality checks were carried out. This identified the following:
 
 * All of the START events have an associated STOP event, as there are the same number of both.
 * All TOTAL RENDER events have a complete set of child events.
 * Most host machines were used between 600 and 700 times during the course of the data, up to 670 times at the third quartile. However, there were 4 host machines that were used in 1240 and 1220 runs respectively as shown in Figure 1.
 * There are some tasks which were ran twice, hence having 20 instances of jobId / taskId pairs in the dataset. 
 
-Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. Some work around the timestamp of each start and stop event during the data preparation phase will give us the total and interim render times in seconds. The GPU data gives is statistics regarding the state of each GPU with a timestamp and data covering Temperature, Power Draw, Utilised Percentage and Memory Utilised Percentage. Through the use of a set of Quantile Quantile graph is can be seen that this data is normalised and therefore we will use the arithmetic mean as the average, and standard deviation to express the variance. These can be seen in figure 2 below, it shows us that we have a complete data set to work with  and that the variance for all variables except temperature is large, which is to be expected as this is the difference between the GPU being in use, or not. This variance will be used along with the execution time identified above to indicate poor performing GPU's. We have also established that we have a complete dataset in GPU, n=1543681.
+Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. Some work around the timestamp of each start and stop event during the data preparation phase will give us the total and interim render times in seconds. The GPU data gives is statistics regarding the state of each GPU with a timestamp and data covering Temperature, Power Draw, Utilised Percentage and Memory Utilised Percentage. Through the use of a set of Quantile Quantile graph it can be seen that this data is normalised and therefore we will use the arithmetic mean as the average, and standard deviation to express the variance. These can be seen in figure 2 below. It shows us that we have a complete data set to work with  and that the variance for all variables except temperature is large, which is to be expected as this is the difference between the GPU being in use, or not. This variance will be used along with the execution time identified above to indicate poor performing GPU's. We have also established that we have a complete dataset in GPU, n=1543681.
 
 ```{r gpuStats, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="GPU Continuous Variable Stats"}
 #stats plot
@@ -86,7 +86,7 @@ ggplot(df.gpustats, aes(x=variable, y=mean)) +
 From this investigation phase it is my intention to pull together a complete dataset to allow comparison of execution times and GPU performance statistics.
 
 ## Data Preparation 
-To identify the lowest performing GPU cards some feature engineering was carried on the application checkpoint dataset. The Total Render Time measure was identified as a measure of execution time, so a dataset was created showing the the hostname, start and end time of the task and total execution time by casting to date and then subtracting the end time from the start time. An examination of this dataset gives a mean render time of 42.61 second and a standard deviation of 6.5 seconds. The distribution shown in Figure 3 with the mean and the upper and lower quartiles a 1 standard deviation. It can be clearly seen that there is a tail on the execution times from the upper quartile at 49.1 seconds to a max of 93.6 seconds.
+To identify the lowest performing GPU cards, some feature engineering was carried on the application checkpoint dataset. The Total Render Time measure was identified as a measure of execution time, so a dataset was created showing the hostname, start and end time of the task and total execution time by casting to date and then subtracting the end time from the start time. An examination of this dataset gives a mean render time of 42.61 seconds and a standard deviation of 6.5 seconds. The distribution is shown in Figure 3 with the mean and the upper and lower quartiles at 1 standard deviation. It can be clearly seen that there is a tail on the execution times from the upper quartile at 49.1 seconds to a max of 93.6 seconds.
 
 ```{r RenderTimeDistribution, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Distribution of Mean Total Render Time"}
 
@@ -108,11 +108,11 @@ ggplot(df.execution, aes(x=totalRenderTime)) +
   
 ``` 
 
-Those hosts above the upper quartile were taken as the dataset of long running hosts. The number of occurance of each host within the upper quartile was then counted which have a mean of 8.0 times and a standard deviation of 6.01. Therefore the upper quartile of this was also taken, so any host which occured in the upper quartile of long running hosts more than 14.02 times was regarded as the final dataset for investigation. This yielded a dataset of 154 records, which when joined back to the execution time table gives 9563 tasks on the longest running hosts, complete with total render time. 
+Those hosts above the upper quartile were taken as the dataset of long running hosts. The number of occurrence of each host within the upper quartile was then counted which have a mean of 8.0 times and a standard deviation of 6.01. Therefore the upper quartile of this was also taken, so any host which occurred in the upper quartile of long running hosts more than 14.02 times was regarded as the final dataset for investigation. This yielded a dataset of 154 records, which when joined back to the execution time table gives 9563 tasks on the longest running hosts, complete with total render time. 
 
 This is still a lot of records to investigate.
 
-In an effort to reduce the volume of records the number of tasks in this long running set was investigated, by the maximum recurrence of a taskId was 2, so this was ignored. I then attempted to take the upper quartile of the long running hosts which results in 843 records to work with, and attempt to relate the GPU dataset to allow identification of the specific GPU being used in the long running tasks.
+In an effort to reduce the volume of records, the number of tasks in this long running set was investigated, by the maximum recurrence of a taskId was 2, so this was ignored. I then attempted to take the upper quartile of the long running hosts which results in 843 records to work with, and attempt to relate the GPU dataset to allow identification of the specific GPU being used in the long running tasks.
 
 Upon investigation of the GPU dataset, it was found that virtually all host names were in the long running hosts top percentiles, and multiple GPU cards were assigned to each hostname and were "active" between the start and end times. It was assumed that a task to render a certain plot was split across all GPU on the host, so the render time was appended to the row identifying each GPU. This gives us the following dataset to work with:
 
@@ -129,7 +129,7 @@ Upon investigation of the GPU dataset, it was found that virtually all host name
 with a total of 23,754 records to investigate.
 
 ## Modelling 
-For the initial investigation the dataset above was slimmed down to just the hostname, gpu serial name and hosts render time, this dropped out 'duplicate' records which were tenths of a second different. This dataset was than investigated for commonly occurring hosts and GPU. As per the figures below it can be seen that there are multiple occurrences of certain hosts and GPU in the longest running tasks data set.
+For the initial investigation, the dataset above was slimmed down to just the hostname, gpu serial name and hosts render time. This dropped out 'duplicate' records which were tenths of a second different. This dataset was than investigated for commonly occurring hosts and GPU. As per the figures below it can be seen that there are multiple occurrences of certain hosts and GPU in the longest running tasks data set.
 
 ```{r countOfHosts, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Hostname occurence in longest running tasks."}
 #plot the occurrence of hosts
@@ -155,7 +155,7 @@ ggplot(data=df.longestGPUSlim %>% count(gpuSerial), aes(as.character(gpuSerial),
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-Further investigation of the dataset allows us to glean the hostname of the longest running task, the time and the GPU, which answers the question of "which is the worst performing GPU", in a general way.
+Further investigation of the dataset allows us to glean the hostname of the longest running task, the time and the GPU. This answers the question of "which is the worst performing GPU", in a general way.
 
 ``` {r WorstPeformingGPU, out.width="100%", fig.cap="Longest running task hostname, serial and time."}
 
@@ -164,9 +164,9 @@ longestGPUSerial = df.jobsbyrendertime[1,2]
 longestHostTime = df.jobsbyrendertime[1,3]
 ```
 
-However, this doesn't allow us to properly investigate that dataset, the raw data regarding execution time means nothing without knowing the work that was carried out. For example, potentially consistently rendering the same grid on the same host, where that grid is particularly complex or has a lot of items to render, would result in a long render time for that host. However, it does not particularly mean that host is underperforming. We should also be able to investigate multiple GPU on multiple hosts. I am also not convinced that showing one GPU per hostname represents the dataset. 
+However, this doesn't allow us to properly investigate that dataset. The raw data regarding execution time means nothing without knowing the work that was carried out. For example, potentially consistently rendering the same grid on the same host, where that grid is particularly complex or has a lot of items to render, would result in a long render time for that host. However, it does not particularly mean that host is under performing. We should also be able to investigate multiple GPU on multiple hosts. I am also not convinced that showing one GPU per hostname represents the dataset. 
 
-Subsequently, after re-iteration through the understanding and preparation tasks, the taskId and jobId was added to the dataset for investigation, to allow association with the grid being rendered. I will also output an ungrouped dataset for the creation of a dashboard. An investigation of render time by the X, Y grid references as per figure below does not seem to indicate any consistency in certain refs being long render times. We should look at other potential issues.
+Subsequently, after re-iteration through the understanding and preparation tasks, the taskId and jobId was added to the dataset for investigation, to allow association with the grid being rendered. I will also output an un-grouped dataset for the creation of a dashboard. An investigation of render time by the X, Y grid references as per figure below does not seem to indicate any consistency in certain refs being long render times. We should look at other potential issues.
 
 
 ```{r RenderByRef, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Longest running task hostname, serial and time."}
@@ -209,7 +209,7 @@ In an effort to find some meaningful data a dashboard was created. Before creati
 * One task is executed on one GPU care on one host machine.
 * Each GPU is in the dataset for many seconds of the longest render time.
 
-This it was concluded if we can select the level of the render to be investigated, then we can show the grids being rendered, the the 1:1 hosts and GPU being used to render it. Upon creating the dashboard the level can be selected, the render times of each grid x,y reference and a list of Host and GPU ordered by render time with the longest to the top. This answers the question with the output in the figure below.
+Thus it was concluded if we can select the level of the render to be investigated, then we can show the grids being rendered, the the 1:1 hosts and GPU being used to render it. Upon creating the dashboard the level can be selected, the render times of each grid x,y reference and a list of Host and GPU ordered by render time with the longest to the top. This answers the question with the output in the figure below.
 
 ![Execution Times](../graphs/ExecutionTimesGraph.png)
 ![Longest Render Times](../graphs/LongestRenderTimes.png)
@@ -217,9 +217,9 @@ This it was concluded if we can select the level of the render to be investigate
 It can clearly be seen that the longest execution time is host '95b4ae6d890e4c46986d91d7ac4bf08200000G', GPU ID 'GPU-27b9e817-3cb1-b47b-6107-de113acbffcd' rendering grid '92,107'.
 
 ## Evaluation 
-To result in a dataset which my laptop was capable of processing, we have in effect taken the upper quartile of response times, followed by taking a second upper quartile. While taking all of the responses which are above a quartile away from the mean is a sound method of identifying the longest running records I am not entirely comfortable with taking another subset merely to fit with the performance limitations of this machine. 
+To result in a dataset which my laptop was capable of processing, we have in effect taken the upper quartile of response times, followed by taking a second upper quartile. While taking all of the responses which are above a quartile away from the mean is a sound method of identifying the longest running records, I am not entirely comfortable with taking another subset merely to fit with the performance limitations of this machine. 
 
-Also, I would have expected multiple GPU ID cards to be found slowly performing on a host on any given task, but that isn't what the data has provided. I am not entirely sure that taking the cards which are showing some activity within the overall task start and finish time, although on the correct host, have identified the complete set of cards. I am hoping that because of the way I have limited the dataset this has coincidentally produced a 1 to 1 dataset between host and GPU. Given more time and more processing power I would have liked to have investigated the dataset further, and potentially looked to export the data via CSV to a specialist visualisation tool such as PowerBI. I found the time investment in Shiny to be useful without being massively productive.
+Also, I would have expected multiple GPU ID cards to be found slowly performing on a host on any given task, but that isn't what the data has provided. I am not entirely sure that taking the cards which are showing some activity within the overall task start and finish time, although on the correct host, have identified the complete set of cards. I am hoping that because of the way I have limited the dataset, it has coincidentally produced a 1 to 1 relationship between host and GPU. Given more time and more processing power, I would have liked to have investigated the dataset further, and potentially looked to export the data via CSV to a specialist visualisation tool such as PowerBI. I found the time investment in Shiny to be useful without being massively productive.
 
 
 ## References

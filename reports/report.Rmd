@@ -53,7 +53,7 @@ A quick review of the provided data was completed which identified that the Appl
 
 To begin to identify the execution time, the Application Checkpoint data was investigated, this contains time stamps for each step of the image render process. There are 5 event types each with a start and stop event recorded. These are Total Render - the complete render event, which is made up of 4 events which are, in order, Render, Saving Config, Tiling, Uploading. Initial investigation will cover the total render time, which will indicate the performance of the GPU, should we get that far we can look into the time of each stage of the render. 
 
-``` {r hostsCount, echo=FALSE, out.width="100%", fig.cap="Azure Hosts use during Render"}
+```{r hostsCount, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Azure Hosts use during Render"}
 df.hostcount <- application.checkpoints %>% count(hostname)
 #host use
 ggplot(data=df.hostcount, aes(x=hostname, y=n, group=1)) +
@@ -72,7 +72,7 @@ In the absence of any continuous data in this table basic data quality checks we
 
 Initial investigation of the GPU data indicates that the Hostname can be used to relate to the GPU on the host, so the 4 spikes of host use may have implications for that. Some work around the timestamp of each start and stop event during the data preparation phase will give us the total and interim render times in seconds. The GPU data gives is statistics regarding the state of each GPU with a timestamp and data covering Temperature, Power Draw, Utilised Percentage and Memory Utilised Percentage. Through the use of a set of Quantile Quantile graph is can be seen that this data is normalised and therefore we will use the arithmetic mean as the average, and standard deviation to express the variance. These can be seen in figure 2 below, it shows us that we have a complete data set to work with  and that the variance for all variables except temperature is large, which is to be expected as this is the difference between the GPU being in use, or not. This variance will be used along with the execution time identified above to indicate poor performing GPU's. We have also established that we have a complete dataset in GPU, n=1543681.
 
-``` {r gpuStats, echo=FALSE, out.width="100%", fig.cap="GPU Continuous Variable Stats"}
+```{r gpuStats, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="GPU Continuous Variable Stats"}
 #stats plot
 ggplot(df.gpustats, aes(x=variable, y=mean)) + 
   geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2) +
@@ -88,7 +88,7 @@ From this investigation phase it is my intention to pull together a complete dat
 ## Data Preparation 
 To identify the lowest performing GPU cards some feature engineering was carried on the application checkpoint dataset. The Total Render Time measure was identified as a measure of execution time, so a dataset was created showing the the hostname, start and end time of the task and total execution time by casting to date and then subtracting the end time from the start time. An examination of this dataset gives a mean render time of 42.61 second and a standard deviation of 6.5 seconds. The distribution shown in Figure 3 with the mean and the upper and lower quartiles a 1 standard deviation. It can be clearly seen that there is a tail on the execution times from the upper quartile at 49.1 seconds to a max of 93.6 seconds.
 
-``` {r RenderTimeDistribution, out.width="100%", fig.cap="Distribution of Mean Total Render Time"}
+```{r RenderTimeDistribution, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Distribution of Mean Total Render Time"}
 
 #plot the distribution
 ggplot(df.execution, aes(x=totalRenderTime)) + 
@@ -131,23 +131,25 @@ with a total of 23,754 records to investigate.
 ## Modelling 
 For the initial investigation the dataset above was slimmed down to just the hostname, gpu serial name and hosts render time, this dropped out 'duplicate' records which were tenths of a second different. This dataset was than investigated for commonly occurring hosts and GPU. As per the figures below it can be seen that there are multiple occurrences of certain hosts and GPU in the longest running tasks data set.
 
-``` {r countOfHosts, out.width="100%", fig.cap="Hostname occurence in longest running tasks."}
+```{r countOfHosts, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Hostname occurence in longest running tasks."}
 #plot the occurrence of hosts
 ggplot(data=df.longestGPUSlim %>% count(hostname), aes(as.character(hostname), y=n, group=1)) +
   geom_line() +
-  labs(title="Number of occurances of hostname in the top percentile longest running tasks", 
-       y="Count", x = "Hostname") 
+  labs(title="Number of occurances of hostname in longest running tasks", 
+       y="Count", x = "Hostname") +
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
   theme_bw() + 
   scale_fill_brewer(palette="PuBu") +
   theme(axis.text.x = element_text(angle = 90))
 ```
 
-``` {r countOfGPU, out.width="100%", fig.cap="GPU Serial occurence in longest running tasks."}
+```{r countOfGPU, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="GPU Serial occurence in longest running tasks."}
 #plot the occurrence of gpus
 ggplot(data=df.longestGPUSlim %>% count(gpuSerial), aes(as.character(gpuSerial), y=n, group=1)) +
   geom_line() +
-  labs(title="Number of occurances of GPU in the top percentile longest running tasks", 
+  labs(title="Number of occurances of GPU in longest running tasks", 
        y="Count", x = "GPU Serial") +
+  scale_x_discrete(label=function(x) substring(x,nchar(x)-5,nchar(x))) +
   theme_bw() + 
   scale_fill_brewer(palette="PuBu") +
   theme(axis.text.x = element_text(angle = 90))
@@ -167,7 +169,7 @@ However, this doesn't allow us to properly investigate that dataset, the raw dat
 Subsequently, after re-iteration through the understanding and preparation tasks, the taskId and jobId was added to the dataset for investigation, to allow association with the grid being rendered. I will also output an ungrouped dataset for the creation of a dashboard. An investigation of render time by the X, Y grid references as per figure below does not seem to indicate any consistency in certain refs being long render times. We should look at other potential issues.
 
 
-``` {r RenderByRef, out.width="100%", fig.cap="Longest running task hostname, serial and time."}
+```{r RenderByRef, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Longest running task hostname, serial and time."}
 ggplot(df.longestGPUGrid, aes(XY, hostLongestRenderTime)) + 
   geom_point() +
   labs(title="Render Time by Grid Reference", y="Render Time", x = "Grid Reference(XY)") +
@@ -178,7 +180,7 @@ ggplot(df.longestGPUGrid, aes(XY, hostLongestRenderTime)) +
 
 A similar investigation into the metrics provided for each GPU also indicates no relationship.  In fact percentage utilisation and memory utilisation are null. There is no obvious relationship for Temperature or Power Draw.
 
-``` {r RenderByMetrics, out.width="100%", fig.cap="Render Time vs GPU metrics."}
+```{r RenderByPowerDraw, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Render Time vs GPU metrics."}
 #render time vs cpu state powerDraw
 ggplot(df.longestGPUGrid, aes(powerDrawWatt , hostLongestRenderTime)) + 
   geom_point() +
@@ -187,6 +189,9 @@ ggplot(df.longestGPUGrid, aes(powerDrawWatt , hostLongestRenderTime)) +
   scale_fill_brewer(palette="PuBu") +
   theme(axis.text.x = element_text(angle = 90))
 
+```
+
+```{r RenderByTemp, echo=FALSE, warning=FALSE, out.width="75%", fig.cap="Render Time vs GPU metrics."}
 #render time vs cpu state temp
 ggplot(df.longestGPUGrid, aes(gpuTempC, hostLongestRenderTime)) + 
   geom_point() +
